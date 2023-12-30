@@ -25,11 +25,9 @@ model Album {
     title     String
     artistId  Int
     songs     Song[]
-    release   DateTime
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     Artist    Artist?  @relation(fields: [artistId], references: [id])
-    mbid      String?
 }
 
 model Playlist {

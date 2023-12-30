@@ -1,5 +1,5 @@
-import { spawn } from "child_process";
-import { createReadStream, existsSync } from "fs";
+import prism from "prism-media";
+import { createReadStream, createWriteStream, existsSync } from "fs";
 import { readFile } from "fs/promises";
 import { join } from "path";
 export const routes = {
@@ -13,9 +13,7 @@ export const routes = {
             if (!song)
                 return res.code(404).send({ error: "Song not found" });
             const formatExtension = format === "opus" ? "ogg" : "flac";
-            const filename = process.env.SAVE_TRANSCODED
-                ? join(req.musicPath, `${song.id}.transcoded.${formatExtension}`)
-                : `/tmp/${song.id}.${formatExtension}`;
+            const filename = join(req.musicPath, `${req.params.id}.transcoded.${formatExtension}`);
             if (!ignore) {
                 await req.db.song.update({
                     where: {
@@ -30,31 +28,31 @@ export const routes = {
                 return res.send(stream);
             }
             const exists = existsSync(filename);
-            if (exists && process.env.SAVE_TRANSCODED) {
+            if (exists) {
                 const file = format === "flac" && song.filename.endsWith(".flac")
                     ? await readFile(song.filename)
                     : await readFile(filename);
-                console.log(file, song.filename);
+                console.log(file, filename);
                 console.log("that's!");
                 res.type(format === "opus" ? "audio/ogg" : "audio/flac");
                 return res.send(file);
             }
-            const argumentList = ["-y", "-i", song.filename, "-c:a", "libopus"];
-            if (format === "opus")
-                argumentList.push("-b:a", "160k");
-            argumentList.push(filename);
-            const stream = spawn("/usr/bin/ffmpeg", argumentList);
-            stream.stdout.on("data", (data) => {
-                console.log(data.toString());
-            });
-            const promise = new Promise((resolve) => {
-                stream.stdout.on("end", async () => {
-                    console.log("deez");
-                    resolve(await readFile(filename));
-                });
-            });
+            const argumentList = format === "opus"
+                ? ["-c:a", "libopus", "-f", "ogg", "-b:a", "160k"]
+                : ["-c:a", "flac", "-f", "flac"];
+            const writeStream = process.env.SAVE_TRANSCODED
+                ? createWriteStream(filename)
+                : null;
+            const ffmpeg = new prism.FFmpeg({ args: argumentList });
             res.type(format === "opus" ? "audio/ogg" : "audio/flac");
-            res.send(await promise);
+            const stream = createReadStream(song.filename).pipe(ffmpeg);
+            stream.on("data", (chunk) => {
+                writeStream?.write(chunk);
+            });
+            stream.on("end", () => {
+                writeStream?.end();
+            });
+            await res.send(stream);
         },
     },
 };

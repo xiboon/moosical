@@ -10,6 +10,7 @@ declare module "fastify" {
 		songManager: SongManager;
 		lyricsProvider: LyricsProvider;
 		musicPath: string;
+		coverPath: string;
 		transformers: Transformers;
 	}
 }

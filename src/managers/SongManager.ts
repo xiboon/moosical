@@ -1,15 +1,16 @@
+import { DiscogsClient } from "@lionralfs/discogs-client";
 import { PrismaClient } from "@prisma/client";
-import { IReleaseGroupMatch } from "musicbrainz-api";
 export interface SongData {
 	title: string;
 	artist: string;
 	featuredArtists: string[];
-	album: Partial<IReleaseGroupMatch>;
+	album: string;
 	duration: number;
 	filename: string;
 	coverArtFormat?: string;
 }
 export class SongManager {
+	discogs = new DiscogsClient({auth: {userToken: process.env.DISCOGS_TOKEN}}).database();
 	constructor(private db: PrismaClient) {}
 
 	async addArtist(name: string, cover?: string): Promise<number> {
@@ -27,9 +28,7 @@ export class SongManager {
 
 	async addAlbum(
 		name: string,
-		releaseDate: string,
 		artistId: number,
-		mbid: string,
 	): Promise<number> {
 		const album = await this.db.album.findFirst({
 			where: { title: name },
@@ -39,9 +38,7 @@ export class SongManager {
 		const data = await this.db.album.create({
 			data: {
 				title: name,
-				release: new Date(releaseDate),
-				artistId,
-				mbid,
+				artistId: artistId,
 			},
 		});
 		return data.id;
@@ -89,10 +86,8 @@ export class SongManager {
 		);
 
 		const albumId = await this.addAlbum(
-			song.album.title,
-			song.album["first-release-date"],
+			song.album,
 			artist,
-			song.album.id,
 		);
 
 		return this.addSong({

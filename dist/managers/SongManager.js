@@ -1,6 +1,8 @@
+import { DiscogsClient } from "@lionralfs/discogs-client";
 export class SongManager {
     constructor(db) {
         this.db = db;
+        this.discogs = new DiscogsClient({ auth: { userToken: process.env.DISCOGS_TOKEN } }).database();
     }
     async addArtist(name, cover) {
         const artist = await this.db.artist.findMany({
@@ -14,7 +16,7 @@ export class SongManager {
         });
         return data.id;
     }
-    async addAlbum(name, releaseDate, artistId, mbid) {
+    async addAlbum(name, artistId) {
         const album = await this.db.album.findFirst({
             where: { title: name },
         });
@@ -23,9 +25,7 @@ export class SongManager {
         const data = await this.db.album.create({
             data: {
                 title: name,
-                release: new Date(releaseDate),
-                artistId,
-                mbid,
+                artistId: artistId,
             },
         });
         return data.id;
@@ -52,7 +52,7 @@ export class SongManager {
         const featuredArtists = await Promise.all(song.featuredArtists.map(async (e) => {
             return (await this.addArtist(e)).toString();
         }));
-        const albumId = await this.addAlbum(song.album.title, song.album["first-release-date"], artist, song.album.id);
+        const albumId = await this.addAlbum(song.album, artist);
         return this.addSong({
             title: song.title,
             albumId: albumId,

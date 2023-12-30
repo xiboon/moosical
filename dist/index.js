@@ -27,6 +27,7 @@ const transformers = new Transformers(db);
 const lyricsProvider = new LyricsProvider(lyricPath);
 app.decorateRequest("songManager");
 app.decorateRequest("lyricsProvider");
+app.decorateRequest("coverPath");
 app.decorateRequest("musicPath");
 app.decorateRequest("transformers");
 app.decorateRequest("db", null);
@@ -35,6 +36,7 @@ app.addHook("onRequest", (req, res, done) => {
     req.songManager = songManager;
     req.lyricsProvider = lyricsProvider;
     req.musicPath = musicPaths;
+    req.coverPath = coverPath;
     req.transformers = transformers;
     done();
 });

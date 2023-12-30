@@ -43,8 +43,6 @@ export class Transformers {
             title: album.title,
             artist,
             songs,
-            mbid: album.mbid,
-            releaseDate: album.release.toUTCString(),
         };
     }
     async transformArtist(artist) {

@@ -1,17 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { Path, glob } from "glob";
 import { parseFile } from "music-metadata";
-import { IReleaseGroupMatch, MusicBrainzApi } from "musicbrainz-api";
 import { SongManager } from "./SongManager";
 import crypto from "crypto";
 import { appendFile } from "fs/promises";
 export class SongIndexer {
-	musicbrainz = new MusicBrainzApi({
-		appName: "h-player",
-		appVersion: "0.0.1",
-		appContactInfo: "xiboonkuba@gmail.com",
-		botAccount: {},
-	});
 	finishedAlbums: string[] = [];
 	constructor(
 		private db: PrismaClient,
@@ -49,7 +42,6 @@ export class SongIndexer {
 		if (path.name.split(".").includes("transcoded")) return;
 
 		const metadata = await parseFile(path.fullpath());
-		let album: Partial<IReleaseGroupMatch>;
 
 		if (metadata.common.picture) {
 			const cover = metadata.common.picture[0];
@@ -62,40 +54,14 @@ export class SongIndexer {
 			}`;
 			await appendFile(coverPath, cover.data);
 		}
-		if (metadata.common.album) {
-			album = await this.findAlbumDataOnline(
-				metadata.common.artists[0],
-				metadata.common.album,
-			);
-			if (album) album.title = metadata.common.album;
-		}
 		return this.manager.addSongToDB({
 			title: metadata.common.title,
 			artist: metadata.common.artists[0],
 			featuredArtists: metadata.common.artists.slice(1),
-			album,
+			album: metadata.common.album,
 			duration: metadata.format.duration,
 			filename: path.fullpath(),
 			coverArtFormat: metadata.common.picture[0]?.format.split("/")[1],
 		});
-	}
-
-	async findAlbumDataOnline(artist: string, albumName: string) {
-		if (this.finishedAlbums.includes(albumName)) {
-			const album = await this.db.album.findFirst({
-				where: { title: albumName },
-			});
-			return {
-				"first-release-date": album.release.toString(),
-				title: album.title,
-				id: album.mbid,
-				artist: album.artistId,
-			};
-		}
-		const album = await this.musicbrainz.search("release-group", {
-			query: `artist:${artist} releasegroup:${albumName}`,
-		});
-		this.finishedAlbums.push(albumName);
-		return album["release-groups"][0];
 	}
 }
