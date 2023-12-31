@@ -1,9 +1,11 @@
-import { FastifyRequest } from "fastify";
-import { Route } from "fastify-file-routes";
+import { FastifyRequest, FastifyReply } from "fastify";
 
-export const routes: Route = {
+export const routes = {
 	get: {
-		handler: async (req: FastifyRequest<{ Params: { id: string } }>, res) => {
+		handler: async (
+			req: FastifyRequest<{ Params: { id: string } }>,
+			res: FastifyReply,
+		) => {
 			if (!req.params.id) {
 				res.code(400).send({ error: "No id specified" });
 				return;

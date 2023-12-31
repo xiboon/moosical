@@ -1,13 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 import { fastify } from "fastify";
-import { fileRoutes } from "fastify-file-routes";
+// import { fileRoutes } from "fastify-file-routes";
 import { join } from "path";
-import { SongManager } from "./managers/SongManager.js";
-import { SongIndexer } from "./managers/SongIndexer.js";
+import { SongManager } from "./classes/SongManager.js";
+import { SongIndexer } from "./classes/SongIndexer.js";
 import { mkdir } from "fs/promises";
-import { LyricsProvider } from "./managers/LyricsProvider.js";
-import { Transformers } from "./managers/Transformers.js";
+import { LyricsProvider } from "./classes/LyricsProvider.js";
+import { Transformers } from "./classes/Transformers.js";
+import { plugin } from "./util/loadRoutes.js";
 
 const mainDir = import.meta.url
 	.replace("file://", "")
@@ -35,12 +36,16 @@ const songIndexer = new SongIndexer(
 );
 const transformers = new Transformers(db);
 const lyricsProvider = new LyricsProvider(lyricPath);
+
+app.register(plugin, { path: join(mainDir, "routes") });
+
 app.decorateRequest("songManager");
 app.decorateRequest("lyricsProvider");
 app.decorateRequest("coverPath");
 app.decorateRequest("musicPath");
 app.decorateRequest("transformers");
 app.decorateRequest("db", null);
+
 app.addHook("onRequest", (req, res, done) => {
 	req.db = db;
 	req.songManager = songManager;
@@ -50,7 +55,23 @@ app.addHook("onRequest", (req, res, done) => {
 	req.transformers = transformers;
 	done();
 });
-app.register(fileRoutes, { routesDir: join(mainDir, "routes") });
+
+await db.user.upsert({
+	where: { id: 1 },
+	update: {},
+	create: {
+		name: "root",
+		permissions: 8,
+		password: process.env.ROOT_PASSWORD || "root",
+	},
+});
+
+// app.register(fileRoutes, {
+// 	dir: join(mainDir, "routes"),
+// 	logLevel: "info",
+// });
+// loadRoutes(join(mainDir, "routes"), app);
+console.log(performance.now());
 songIndexer.indexSongs().then(() => {
 	app.listen({ port: parseInt(process.env.PORT) }, () => {
 		console.log(`Server is running on port ${process.env.PORT}`);

@@ -24,6 +24,7 @@
     "dotenv": "^16.3.1",
     "fastest-levenshtein": "^1.0.16",
     "fastify": "^4.24.3",
+    "fastify-autoroutes": "^3.0.2",
     "fastify-file-routes": "^1.1.2",
     "genius-lyrics": "^4.4.6",
     "glob": "^10.3.10",

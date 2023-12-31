@@ -1,9 +1,11 @@
-import { FastifyRequest } from "fastify";
-import { Route } from "fastify-file-routes";
+import { FastifyRequest, FastifyReply } from "fastify";
 
-export const routes: Route = {
+export const routes = {
 	get: {
-		handler: async (req: FastifyRequest<{ Params: { ids: string } }>, res) => {
+		handler: async (
+			req: FastifyRequest<{ Params: { ids: string } }>,
+			res: FastifyReply,
+		) => {
 			const ids = req.params.ids.split(",").map((e) => parseInt(e));
 			if (ids.some((e) => Number.isNaN(e)))
 				return res.code(400).send({ error: "Invalid IDs" });

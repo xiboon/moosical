@@ -1,14 +1,13 @@
 // import { spawn } from "child_process";
 // import { spawn } from "child_process";
 import prism from "prism-media";
-import { FastifyRequest } from "fastify";
-import { Route } from "fastify-file-routes";
+import { FastifyRequest, FastifyReply } from "fastify";
 import { createReadStream, createWriteStream, existsSync } from "fs";
 import { readFile } from "fs/promises";
 import { join } from "path";
 // import Ffmpeg from "fluent-ffmpeg";
 // import { Writable } from "stream";
-export const routes: Route = {
+export const routes = {
 	get: {
 		handler: async (
 			req: FastifyRequest<{
@@ -18,7 +17,7 @@ export const routes: Route = {
 					ignore?: boolean;
 				};
 			}>,
-			res,
+			res: FastifyReply,
 		) => {
 			// const stream = new Writable();
 			const format = req.query.format || "flac";

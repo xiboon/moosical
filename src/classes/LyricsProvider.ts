@@ -1,18 +1,19 @@
 import Genius from "genius-lyrics";
 import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
+import { existsSync } from "fs";
 export class LyricsProvider {
 	genius: Genius.Client;
 	constructor(public lyricPath: string) {
 		this.genius = new Genius.Client(process.env.GENIUS_TOKEN);
 	}
 	async findLyrics(artist: string, title: string, featuredArtists?: string[]) {
-		const file = await readFile(
-			join(this.lyricPath, `${artist} - ${title}.lrc`),
-			"utf-8",
-		);
-		if (file) return { source: "file", lyrics: file };
-		featuredArtists.push(artist);
+		const path = join(this.lyricPath, `${artist} - ${title}.lrc`);
+		if (existsSync(path)) {
+			const file = await readFile(path, "utf-8");
+			return { source: "file", lyrics: file };
+		}
+		featuredArtists?.push(artist);
 		const geniusTitle = title.replaceAll("(", "").replaceAll(")", "");
 		let source = "lrclib";
 		let lyrics = await fetch(

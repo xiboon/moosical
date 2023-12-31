@@ -1,5 +1,8 @@
-import { Route } from "fastify-file-routes";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-export const routes: Route = {
-	get: { handler: (req, res) => res.send("Hello, world!") },
+export const routes = {
+	get: {
+		handler: (req: FastifyRequest, res: FastifyReply) =>
+			res.send("Hello, world!"),
+	},
 };

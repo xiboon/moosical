@@ -1,9 +1,8 @@
-import { FastifyRequest } from "fastify";
-import { Route } from "fastify-file-routes";
+import { FastifyRequest, FastifyReply } from "fastify";
 
-export const routes: Route = {
+export const routes = {
 	get: {
-		handler: async (req, res) => {
+		handler: async (req, res: FastifyReply) => {
 			const allPlaylists = await req.db.playlist.findMany();
 			allPlaylists.map((e) => {
 				return req.transformers.transformPlaylist(e, false);

@@ -1,14 +1,13 @@
-import { FastifyRequest } from "fastify";
-import { Route } from "fastify-file-routes";
+import { FastifyRequest, FastifyReply } from "fastify";
 
-export const routes: Route = {
+export const routes = {
 	put: {
 		handler: async (
 			req: FastifyRequest<{
 				Body: { songIds: number[] };
 				Params: { id: string };
 			}>,
-			res,
+			res: FastifyReply,
 		) => {
 			const id = parseInt(req.params.id);
 			if (!id || Number.isNaN(id)) {

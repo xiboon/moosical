@@ -11,4 +11,4 @@ a work in progress self-hosted music streaming service
 - [ ] custom daily mixes for users
 - [ ] user system
 - [ ] uploading songs
-- [ ] permissions system
+- [ ] permissions systems

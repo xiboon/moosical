@@ -28,6 +28,7 @@ export class SongIndexer {
 				}, startingPromise);
 			}),
 		).then(() => {
+			console.log(performance.now());
 			console.log("Done with indexing!");
 		});
 	}

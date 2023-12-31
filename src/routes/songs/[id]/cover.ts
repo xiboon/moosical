@@ -1,10 +1,13 @@
-import { FastifyRequest } from "fastify";
-import { Route } from "fastify-file-routes";
+import { FastifyRequest, FastifyReply } from "fastify";
+
 import { readFile } from "fs/promises";
 import crypto from "crypto";
-export const routes: Route = {
+export const routes = {
 	get: {
-		handler: async (req: FastifyRequest<{ Params: { id: string } }>, res) => {
+		handler: async (
+			req: FastifyRequest<{ Params: { id: string } }>,
+			res: FastifyReply,
+		) => {
 			const song = await req.db.song.findUnique({
 				where: { id: parseInt(req.params.id) },
 			});

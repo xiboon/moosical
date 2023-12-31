@@ -1,8 +1,7 @@
 import { distance } from "fastest-levenshtein";
-import { FastifyRequest } from "fastify";
-import { Route } from "fastify-file-routes";
+import { FastifyRequest, FastifyReply } from "fastify";
 
-export const routes: Route = {
+export const routes = {
 	get: {
 		handler: async (
 			req: FastifyRequest<{ Querystring: { search: string; limit?: number } }>,

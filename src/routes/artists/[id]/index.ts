@@ -1,9 +1,11 @@
-import { FastifyRequest } from "fastify";
-import { Route } from "fastify-file-routes";
+import { FastifyRequest, FastifyReply } from "fastify";
 
-export const routes: Route = {
+export const routes = {
 	get: {
-		handler: async (req: FastifyRequest<{ Params: { id: string } }>, res) => {
+		handler: async (
+			req: FastifyRequest<{ Params: { id: string } }>,
+			res: FastifyReply,
+		) => {
 			const id = parseInt(req.params.id);
 			const artist = await req.db.artist.findUnique({ where: { id } });
 			if (!artist) {
