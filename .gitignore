@@ -6,3 +6,4 @@ package-lock.json
 lyrics
 covers
 dist
+.secrets.json

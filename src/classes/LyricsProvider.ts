@@ -19,8 +19,9 @@ export class LyricsProvider {
 		let lyrics = await fetch(
 			`https://lrclib.net/api/search?track_name=${title}&artist_name=${artist}`,
 		).then((res) => res.json());
+
 		// if lyrics aren't on lrclib, try genius
-		if (lyrics?.length === 0) {
+		if (lyrics?.length === 0 && process.env.GENIUS_TOKEN) {
 			const search = await this.genius.songs.search(
 				`${geniusTitle} ${featuredArtists ? "" : artist}`,
 			);
@@ -48,7 +49,7 @@ export class LyricsProvider {
 				join(this.lyricPath, `${artist} - ${title}.lrc`),
 				lyrics as string,
 			);
-		if (!lyrics) console.log(artist, title, "no lyrics found");
+
 		return lyrics
 			? {
 					source,
