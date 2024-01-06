@@ -12,11 +12,10 @@ datasource db {
 
 model User {
     id             Int        @id @default(autoincrement())
-    email          String?    @unique
     password       String
     name           String     @unique
     createdAt      DateTime   @default(now())
-    permissions    Int
+    permissions    String     @default("")
     lastValidToken DateTime?
     playlists      Playlist[]
 }
@@ -48,6 +47,7 @@ model Playlist {
     songIds     String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+    public      Boolean  @default(true)
     User        User?    @relation(fields: [userId], references: [id])
     userId      Int?
 }

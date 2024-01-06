@@ -1,10 +1,9 @@
-// import { spawn } from "child_process";
-// import { spawn } from "child_process";
 import prism from "prism-media";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { createReadStream, createWriteStream, existsSync } from "fs";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import mime from "mime";
 // import Ffmpeg from "fluent-ffmpeg";
 // import { Writable } from "stream";
 export const routes = {
@@ -13,15 +12,18 @@ export const routes = {
 			req: FastifyRequest<{
 				Params: { id: string };
 				Querystring: {
-					format?: "opus" | "flac";
+					format?: "opus" | "flac" | "original";
+					quality: 64 | 96 | 128 | 192;
 					ignore?: boolean;
 				};
 			}>,
 			res: FastifyReply,
 		) => {
 			// const stream = new Writable();
-			const format = req.query.format || "flac";
+			const format = req.query.format || "original";
 			const ignore = req.query.ignore || true;
+			if (![64, 96, 128, 192].includes(req.query.quality))
+				return res.code(400).send({ error: "Invalid quality" });
 
 			const song = await req.db.song.findUnique({
 				where: { id: parseInt(req.params.id) },
@@ -42,9 +44,12 @@ export const routes = {
 					data: { listens: { increment: 1 } },
 				});
 			}
-			if (format === "flac" && song.filename.endsWith(".flac")) {
-				const stream = createReadStream(song.filename);
-				res.type("audio/flac");
+			if (
+				(format === "flac" && song.filename.endsWith(".flac")) ||
+				format === "original"
+			) {
+				const stream = await readFile(song.filename);
+				res.type(mime.getType(song.filename) || "audio/flac");
 				return res.send(stream);
 			}
 			const exists = existsSync(filename);
@@ -62,7 +67,7 @@ export const routes = {
 
 			const argumentList =
 				format === "opus"
-					? ["-c:a", "libopus", "-f", "ogg", "-b:a", "160k"]
+					? ["-c:a", "libopus", "-f", "ogg", "-b:a", `${req.query.quality}k`]
 					: ["-c:a", "flac", "-f", "flac"];
 			const writeStream = process.env.SAVE_TRANSCODED
 				? createWriteStream(filename)

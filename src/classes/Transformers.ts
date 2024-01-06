@@ -88,10 +88,14 @@ export class Transformers {
 				album: e.albumId,
 			}));
 		}
+		const author = await this.db.user.findUnique({
+			where: { id: playlist.userId },
+		});
 		return {
 			id: playlist.id,
 			name: playlist.title,
 			description: playlist.description,
+			author: { name: author.name, id: author.id },
 			songs,
 		};
 	}

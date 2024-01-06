@@ -28,6 +28,10 @@ export const routes = {
 				res.code(404).send({ error: "Playlist not found" });
 				return;
 			}
+			if (!playlist.public && playlist.userId !== req.userId) {
+				res.code(403).send({ error: "Forbidden" });
+				return;
+			}
 			const songs = await req.db.song.findMany({
 				where: {
 					id: {
@@ -66,6 +70,10 @@ export const routes = {
 			});
 			if (!playlist) {
 				res.code(404).send({ error: "Playlist not found" });
+				return;
+			}
+			if (!playlist.public && playlist.userId !== req.userId) {
+				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
 			await req.db.playlist.update({

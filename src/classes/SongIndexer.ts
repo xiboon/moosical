@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { Path, glob } from "glob";
-import { parseFile } from "music-metadata";
+import { parseBuffer, parseFile } from "music-metadata";
 import { SongManager } from "./SongManager";
 import crypto from "crypto";
-import { appendFile } from "fs/promises";
+import { appendFile, writeFile } from "fs/promises";
 export class SongIndexer {
 	finishedAlbums: string[] = [];
 	constructor(
@@ -33,17 +33,8 @@ export class SongIndexer {
 		});
 	}
 	// TODO: yell at the user if song isn't tagged properly
-	async parseSongFromPath(path: Path) {
-		const exists = await this.db.song.findMany({
-			where: { filename: path.fullpath() },
-		});
-		if (exists.length !== 0) {
-			return;
-		}
-		if (path.name.split(".").includes("transcoded")) return;
-
-		const metadata = await parseFile(path.fullpath());
-
+	async parseSongFromData(data: Buffer, existsInFolder = true, path?: Path) {
+		const metadata = await parseBuffer(data);
 		if (metadata.common.picture) {
 			const cover = metadata.common.picture[0];
 			const hash = crypto
@@ -55,14 +46,33 @@ export class SongIndexer {
 			}`;
 			await appendFile(coverPath, cover.data);
 		}
+		if (!existsInFolder) {
+			writeFile(
+				`${metadata.common.title} - ${metadata.common.artist}.${metadata.format.container}`,
+				data,
+			);
+		}
 		return this.manager.addSongToDB({
 			title: metadata.common.title,
 			artist: metadata.common.artists[0],
 			featuredArtists: metadata.common.artists.slice(1),
 			album: metadata.common.album,
 			duration: metadata.format.duration,
-			filename: path.fullpath(),
+			filename:
+				path.fullpath() ||
+				`${metadata.common.title} - ${metadata.common.artist}.${metadata.format.container}`,
 			coverArtFormat: metadata.common.picture[0]?.format.split("/")[1],
 		});
+	}
+	async parseSongFromPath(path: Path) {
+		const exists = await this.db.song.findMany({
+			where: { filename: path.fullpath() },
+		});
+		if (exists.length !== 0) {
+			return;
+		}
+		if (path.name.split(".").includes("transcoded")) return;
+
+		const metadata = await parseFile(path.fullpath());
 	}
 }

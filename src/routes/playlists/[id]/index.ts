@@ -12,6 +12,10 @@ export const routes = {
 				res.code(404).send({ error: "Playlist not found" });
 				return;
 			}
+			if (!playlist.public && playlist.userId !== req.userId) {
+				res.code(403).send({ error: "Forbidden" });
+				return;
+			}
 			res.send(await req.transformers.transformPlaylist(playlist, true));
 		},
 	},

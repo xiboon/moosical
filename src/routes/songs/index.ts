@@ -1,11 +1,10 @@
 import { distance } from "fastest-levenshtein";
 import { FastifyRequest, FastifyReply } from "fastify";
-
 export const routes = {
 	get: {
 		handler: async (
 			req: FastifyRequest<{ Querystring: { search: string; limit?: number } }>,
-			res,
+			res: FastifyReply,
 		) => {
 			const search = req.query.search;
 			const limit = req.query.limit || 50;
@@ -15,6 +14,10 @@ export const routes = {
 			}
 			if (limit > 100) {
 				res.code(400).send({ error: "Limit too high" });
+				return;
+			}
+			if (!search) {
+				res.code(400).send({ error: "No search string provided" });
 				return;
 			}
 			const allSongs = await req.db.song.findMany();
@@ -50,6 +53,9 @@ export const routes = {
 					.map((e) => req.transformers.transformSong(allSongs[e.index])),
 			);
 			res.code(200).send(songs);
+		},
+		post: {
+			handler: async (req: FastifyRequest, res: FastifyReply) => {},
 		},
 	},
 };

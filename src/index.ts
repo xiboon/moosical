@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { fastify } from "fastify";
 import cookie from "@fastify/cookie";
 import crypto from "crypto";
+import bcrypt from "bcrypt";
 import { createVerifier } from "fast-jwt";
 import { join } from "path";
 import { mkdir, readFile, writeFile } from "fs/promises";
@@ -12,6 +13,8 @@ import { SongIndexer } from "./classes/SongIndexer.js";
 import { LyricsProvider } from "./classes/LyricsProvider.js";
 import { Transformers } from "./classes/Transformers.js";
 import { plugin } from "./util/loadRoutes.js";
+import fastifyAuth from "@fastify/auth";
+import { permissions } from "./util/permissions.js";
 
 const mainDir = import.meta.url
 	.replace("file://", "")
@@ -54,6 +57,7 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 }
 
 app.register(cookie);
+app.register(fastifyAuth);
 app.register(plugin, { path: join(mainDir, "routes") });
 const verifier = createVerifier({
 	key: process.env.JWT_SECRET,
@@ -84,8 +88,8 @@ await db.user.upsert({
 	update: {},
 	create: {
 		name: "root",
-		permissions: 8,
-		password: process.env.ROOT_PASSWORD || "root",
+		permissions: permissions.join(" "),
+		password: await bcrypt.hash(process.env.ROOT_PASSWORD || "root", 12),
 	},
 });
 

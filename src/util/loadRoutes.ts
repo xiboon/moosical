@@ -7,10 +7,13 @@ import {
 } from "fastify";
 import { readdir } from "fs/promises";
 import { join } from "path";
+import { verifyJWT } from "./verifyJWT.js";
 export type Route = "get" | "post" | "put" | "delete" | "patch";
 export type Routes = Record<
 	Route,
-	{ handler: (req: FastifyRequest, res: FastifyReply) => void }
+	{
+		handler: (req: FastifyRequest, res: FastifyReply) => void;
+	}
 >;
 export function plugin(
 	instance: FastifyInstance,
@@ -42,13 +45,15 @@ export async function loadRoutes(
 				.replaceAll(".ts", "")
 				.replaceAll(".js", "");
 
-			if (transformedPath.endsWith("index"))
-				transformedPath = transformedPath.slice(0, -5);
-
+			if (transformedPath.endsWith("/index"))
+				transformedPath = transformedPath.slice(0, -6);
+			console.log(transformedPath);
 			Object.entries(route.routes).forEach(([method, { handler }]) => {
+				if (!handler) return console.log(transformedPath);
 				instance.route({
 					method: method.toUpperCase() as HTTPMethods,
 					handler,
+					preHandler: instance.auth([verifyJWT]),
 					url: transformedPath,
 				});
 			});

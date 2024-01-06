@@ -20,7 +20,6 @@ export class LyricsProvider {
 			`https://lrclib.net/api/search?track_name=${title}&artist_name=${artist}`,
 		).then((res) => res.json());
 
-		// if lyrics aren't on lrclib, try genius
 		if (lyrics?.length === 0 && process.env.GENIUS_TOKEN) {
 			const search = await this.genius.songs.search(
 				`${geniusTitle} ${featuredArtists ? "" : artist}`,
@@ -40,7 +39,7 @@ export class LyricsProvider {
 			if (firstSynced) {
 				lyrics = firstSynced?.syncedLyrics;
 			} else {
-				lyrics = lyrics[0].plainLyrics;
+				lyrics = lyrics[0]?.plainLyrics;
 			}
 		}
 

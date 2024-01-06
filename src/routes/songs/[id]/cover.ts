@@ -23,7 +23,6 @@ export const routes = {
 			const file = await readFile(coverPath);
 			res.type(`image/${song.coverArtFormat}`);
 			return res.send(file);
-			// res.code(200).send(await req.transformers.transformSong(song));
 		},
 	},
 };

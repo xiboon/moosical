@@ -17,6 +17,10 @@ export const routes = {
 				artist.name,
 				dbSong.title,
 			);
+			if (!lyrics) {
+				res.code(404).send({ error: "Lyrics not found" });
+				return;
+			}
 			res.code(200).send(lyrics);
 		},
 	},
