@@ -1,4 +1,4 @@
-# h-player
+# Moosical
 a work in progress self-hosted music streaming service
 
 ## TODO
@@ -11,5 +11,5 @@ a work in progress self-hosted music streaming service
 - [x] ffmpeg streaming instead of waiting for the whole file to transcode 
 - [ ] custom daily mixes for users
 - [x] user system
-- [ ] uploading songs
+- [x] uploading songs
 - [x] permissions systems

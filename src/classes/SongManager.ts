@@ -10,7 +10,9 @@ export interface SongData {
 	coverArtFormat?: string;
 }
 export class SongManager {
-	discogs = new DiscogsClient({auth: {userToken: process.env.DISCOGS_TOKEN}}).database();
+	discogs = new DiscogsClient({
+		auth: { userToken: process.env.DISCOGS_TOKEN },
+	}).database();
 	constructor(private db: PrismaClient) {}
 
 	async addArtist(name: string, cover?: string): Promise<number> {
@@ -26,10 +28,7 @@ export class SongManager {
 		return data.id;
 	}
 
-	async addAlbum(
-		name: string,
-		artistId: number,
-	): Promise<number> {
+	async addAlbum(name: string, artistId: number): Promise<number> {
 		const album = await this.db.album.findFirst({
 			where: { title: name },
 		});
@@ -85,10 +84,7 @@ export class SongManager {
 			}),
 		);
 
-		const albumId = await this.addAlbum(
-			song.album,
-			artist,
-		);
+		const albumId = await this.addAlbum(song.album, artist);
 
 		return this.addSong({
 			title: song.title,

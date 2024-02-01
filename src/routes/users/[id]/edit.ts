@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import bcrypt from "bcrypt";
-import { Permissions } from "../../../util/permissions";
+import { Permissions, permissions } from "../../../util/permissions.js";
 export const routes = {
 	patch: {
 		handler: async (
@@ -53,6 +53,10 @@ export const routes = {
 			if (req.body.permissions) {
 				if (!manageUsers) {
 					res.code(403).send({ error: "Forbidden" });
+					return;
+				}
+				if (req.body.permissions.some((e) => !permissions.includes(e))) {
+					res.code(400).send({ error: "Invalid permissions" });
 					return;
 				}
 				changes.permissions = req.body.permissions.join(" ");

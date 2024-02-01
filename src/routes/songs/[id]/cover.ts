@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-
 import { readFile } from "fs/promises";
 import crypto from "crypto";
+
 export const routes = {
 	get: {
 		handler: async (
@@ -19,7 +19,7 @@ export const routes = {
 				.createHash("sha1")
 				.update(artist.name + song.title)
 				.digest("hex");
-			const coverPath = `${req.coverPath}/${hash}.${song.coverArtFormat}`;
+			const coverPath = `${req.imagePath}/${hash}.${song.coverArtFormat}`;
 			const file = await readFile(coverPath);
 			res.type(`image/${song.coverArtFormat}`);
 			return res.send(file);

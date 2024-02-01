@@ -13,7 +13,7 @@ export const routes = {
 				Params: { id: string };
 				Querystring: {
 					format?: "opus" | "flac" | "original";
-					quality: 64 | 96 | 128 | 192;
+					quality: "64" | "96" | "128" | "160" | "320";
 					ignore?: boolean;
 				};
 			}>,
@@ -22,7 +22,8 @@ export const routes = {
 			// const stream = new Writable();
 			const format = req.query.format || "original";
 			const ignore = req.query.ignore || true;
-			if (![64, 96, 128, 192].includes(req.query.quality))
+			req.query.quality ??= "160";
+			if (!["64", "96", "128", "160", "320"].includes(req.query.quality))
 				return res.code(400).send({ error: "Invalid quality" });
 
 			const song = await req.db.song.findUnique({
@@ -34,7 +35,7 @@ export const routes = {
 			const formatExtension = format === "opus" ? "ogg" : "flac";
 			const filename = join(
 				req.musicPath,
-				`${req.params.id}.transcoded.${formatExtension}`,
+				`${req.params.id}.transcoded${req.query.quality}.${formatExtension}`,
 			);
 			if (!ignore) {
 				await req.db.song.update({
@@ -69,10 +70,12 @@ export const routes = {
 				format === "opus"
 					? ["-c:a", "libopus", "-f", "ogg", "-b:a", `${req.query.quality}k`]
 					: ["-c:a", "flac", "-f", "flac"];
+			console.log(argumentList);
 			const writeStream = process.env.SAVE_TRANSCODED
 				? createWriteStream(filename)
 				: null;
 			const ffmpeg = new prism.FFmpeg({ args: argumentList });
+
 			res.type(format === "opus" ? "audio/ogg" : "audio/flac");
 
 			const stream = createReadStream(song.filename).pipe(ffmpeg);

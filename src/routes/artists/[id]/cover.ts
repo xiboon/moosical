@@ -27,7 +27,7 @@ export const routes = {
 				.createHash("sha1")
 				.update(`${artist.name}`)
 				.digest("hex");
-			const coverPath = `${req.coverPath}/artist_${hash}.jpg`;
+			const coverPath = `${req.imagePath}/artist_${hash}.jpg`;
 			if (existsSync(coverPath)) {
 				return res.type("image/jpeg").send(await readFile(coverPath));
 			}

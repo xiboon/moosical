@@ -6,7 +6,9 @@ export const routes = {
 			res: FastifyReply,
 		) => {
 			const user = await req.db.user.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: {
+					id: req.params.id === "me" ? req.userId : parseInt(req.params.id),
+				},
 			});
 			if (!user) {
 				res.status(404);

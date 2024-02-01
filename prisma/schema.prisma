@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-    id             Int        @id @default(autoincrement())
-    password       String
-    name           String     @unique
-    createdAt      DateTime   @default(now())
-    permissions    String     @default("")
-    lastValidToken DateTime?
-    playlists      Playlist[]
+    id              Int        @id @default(autoincrement())
+    password        String
+    name            String     @unique
+    createdAt       DateTime   @default(now())
+    permissions     String     @default("")
+    avatarExtension String?
+    lastValidToken  DateTime?
+    playlists       Playlist[]
 }
 
 model Artist {

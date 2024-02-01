@@ -1,5 +1,6 @@
 import { distance } from "fastest-levenshtein";
 import { FastifyRequest, FastifyReply } from "fastify";
+import { join } from "path";
 export const routes = {
 	get: {
 		handler: async (
@@ -54,8 +55,21 @@ export const routes = {
 			);
 			res.code(200).send(songs);
 		},
-		post: {
-			handler: async (req: FastifyRequest, res: FastifyReply) => {},
+	},
+	post: {
+		handler: async (req: FastifyRequest, res: FastifyReply) => {
+			const songFile = await req.file();
+			if (songFile?.type !== "file")
+				return res.code(400).send({ error: "No file provided" });
+			if (!songFile.mimetype.startsWith("audio/"))
+				return res.code(400).send({ error: "Invalid file" });
+			const song = await req.songIndexer.parseSongFromData(
+				await songFile.toBuffer(),
+				join(req.musicPath, songFile.filename),
+			);
+			if (!song) return res.code(400).send({ error: "Invalid file" });
+			const songData = await req.db.song.findFirst({ where: { id: song } });
+			res.send(await req.transformers.transformSong(songData));
 		},
 	},
 };

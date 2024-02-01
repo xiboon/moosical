@@ -2,7 +2,7 @@ import { Album, Artist, Playlist, PrismaClient, Song } from "@prisma/client";
 
 export class Transformers {
 	constructor(private db: PrismaClient) {}
-	async transformSong(song: Song) {
+	async transformSong(song: Song, includeAlbum = true) {
 		const artist = await this.db.artist.findUnique({
 			where: { id: song.artistId },
 		});
@@ -18,9 +18,11 @@ export class Transformers {
 						},
 					},
 			  });
-		const album = await this.db.album.findUnique({
-			where: { id: song.albumId },
-		});
+		const album = includeAlbum
+			? await this.db.album.findUnique({
+					where: { id: song.albumId },
+			  })
+			: null;
 
 		return {
 			id: song.id,
@@ -32,39 +34,49 @@ export class Transformers {
 			format: song.coverArtFormat,
 		};
 	}
-	async transformAlbum(album: Album) {
+	async transformAlbum(album: Album, includeSongs = true) {
 		const artist = await this.db.artist.findUnique({
 			where: { id: album.artistId },
 		});
-		const songs = await Promise.all(
-			(
-				await this.db.song.findMany({
-					where: { albumId: album.id },
-				})
-			).map((e) => this.transformSong(e)),
-		);
+		const songs = includeSongs
+			? await Promise.all(
+					(
+						await this.db.song.findMany({
+							where: { albumId: album.id },
+						})
+					).map((e) => this.transformSong(e, false)),
+			  )
+			: [];
 		return {
 			id: album.id,
 			title: album.title,
-			artist,
+			artist: await this.transformArtist(artist, false, false),
 			songs,
 		};
 	}
-	async transformArtist(artist: Artist) {
-		const albums = await Promise.all(
-			(
-				await this.db.album.findMany({
-					where: { artistId: artist.id },
-				})
-			).map((e) => this.transformAlbum(e)),
-		);
-		const songs = await Promise.all(
-			(
-				await this.db.song.findMany({
-					where: { artistId: artist.id },
-				})
-			).map((e) => this.transformSong(e)),
-		);
+	async transformArtist(
+		artist: Artist,
+		includeAlbums = true,
+		includeSongs = true,
+	) {
+		const albums = includeAlbums
+			? await Promise.all(
+					(
+						await this.db.album.findMany({
+							where: { artistId: artist.id },
+						})
+					).map((e) => this.transformAlbum(e)),
+			  )
+			: [];
+		const songs = includeSongs
+			? await Promise.all(
+					(
+						await this.db.song.findMany({
+							where: { artistId: artist.id },
+						})
+					).map((e) => this.transformSong(e)),
+			  )
+			: [];
 		return {
 			id: artist.id,
 			name: artist.name,
@@ -76,17 +88,15 @@ export class Transformers {
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		let songs: Record<string, any>[] = [];
 		if (includeSongs) {
-			songs = (
-				await this.db.song.findMany({
-					where: {
-						id: { in: playlist.songIds.split(" ").map((e) => parseInt(e)) },
-					},
-				})
-			).map((e) => ({
-				name: e.title,
-				artist: e.artistId,
-				album: e.albumId,
-			}));
+			songs = await Promise.all(
+				(
+					await this.db.song.findMany({
+						where: {
+							id: { in: playlist.songIds.split(" ").map((e) => parseInt(e)) },
+						},
+					})
+				).map((e) => this.transformSong(e)),
+			);
 		}
 		const author = await this.db.user.findUnique({
 			where: { id: playlist.userId },

@@ -50,10 +50,11 @@ export async function loadRoutes(
 			console.log(transformedPath);
 			Object.entries(route.routes).forEach(([method, { handler }]) => {
 				if (!handler) return console.log(transformedPath);
+				if (method === "post") console.log(`${transformedPath} b`);
 				instance.route({
 					method: method.toUpperCase() as HTTPMethods,
 					handler,
-					preHandler: instance.auth([verifyJWT]),
+					preHandler: instance.auth([verifyJWT], { run: "all" }),
 					url: transformedPath,
 				});
 			});

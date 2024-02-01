@@ -2,18 +2,20 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { fastify } from "fastify";
 import cookie from "@fastify/cookie";
+import cors from "@fastify/cors";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { createVerifier } from "fast-jwt";
 import { join } from "path";
 import { mkdir, readFile, writeFile } from "fs/promises";
+import { fastifyMultipart } from "@fastify/multipart";
+import fastifyAuth from "@fastify/auth";
 
 import { SongManager } from "./classes/SongManager.js";
 import { SongIndexer } from "./classes/SongIndexer.js";
 import { LyricsProvider } from "./classes/LyricsProvider.js";
 import { Transformers } from "./classes/Transformers.js";
 import { plugin } from "./util/loadRoutes.js";
-import fastifyAuth from "@fastify/auth";
 import { permissions } from "./util/permissions.js";
 
 const mainDir = import.meta.url
@@ -23,13 +25,13 @@ const mainDir = import.meta.url
 	.join("/");
 
 // TODO: provide better support for paths (this doesn't work with non-relative paths)
-const coverPath = join(`${mainDir}/..`, process.env.COVER_PATH);
+const imagePath = join(`${mainDir}/..`, process.env.IMAGE_PATH);
 const lyricPath = join(`${mainDir}/..`, process.env.LYRICS_PATH);
 const musicPaths = process.env.MUSIC_PATH.startsWith("/")
 	? process.env.MUSIC_PATH
 	: join(`${mainDir}/..`, process.env.MUSIC_PATH);
 
-await mkdir(coverPath).catch((e) => {});
+await mkdir(imagePath).catch((e) => {});
 await mkdir(lyricPath).catch((e) => {});
 
 const app = fastify();
@@ -39,7 +41,7 @@ const songIndexer = new SongIndexer(
 	db,
 	songManager,
 	process.env.MUSIC_PATH.split(";"),
-	coverPath,
+	imagePath,
 );
 const transformers = new Transformers(db);
 const lyricsProvider = new LyricsProvider(lyricPath);
@@ -57,17 +59,27 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 }
 
 app.register(cookie);
+app.register(fastifyMultipart, {
+	limits: { fileSize: 1024 * 1024 * 1024 * 100, files: 1, fields: 0 },
+});
 app.register(fastifyAuth);
+app.register(cors, {
+	origin: process.env.CORS_ORIGIN,
+	credentials: true,
+});
 app.register(plugin, { path: join(mainDir, "routes") });
+
 const verifier = createVerifier({
 	key: process.env.JWT_SECRET,
 	algorithms: ["HS256"],
 	cache: true,
 });
+
+app.decorateRequest("songIndexer");
 app.decorateRequest("jwtVerifier");
 app.decorateRequest("songManager");
 app.decorateRequest("lyricsProvider");
-app.decorateRequest("coverPath");
+app.decorateRequest("imagePath");
 app.decorateRequest("musicPath");
 app.decorateRequest("transformers");
 app.decorateRequest("db");
@@ -75,10 +87,11 @@ app.decorateRequest("db");
 app.addHook("onRequest", (req, res, done) => {
 	req.jwtVerifier = verifier;
 	req.db = db;
+	req.songIndexer = songIndexer;
 	req.songManager = songManager;
 	req.lyricsProvider = lyricsProvider;
 	req.musicPath = musicPaths;
-	req.coverPath = coverPath;
+	req.imagePath = imagePath;
 	req.transformers = transformers;
 	done();
 });

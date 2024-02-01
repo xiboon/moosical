@@ -1,7 +1,12 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
 export async function verifyJWT(req: FastifyRequest, res: FastifyReply, done) {
-	if (req.url === "/users/register" || req.url === "/users/auth") {
+	console.log("request receive");
+	const nonAuthRoutes = ["/users/register", "/users/auth", "/albums/amount"];
+	if (
+		nonAuthRoutes.includes(req.url) ||
+		(req.url.startsWith("/albums") && req.url.endsWith("cover"))
+	) {
 		return done();
 	}
 	const cookies = req.cookies;
@@ -13,8 +18,8 @@ export async function verifyJWT(req: FastifyRequest, res: FastifyReply, done) {
 	try {
 		const decoded = req.jwtVerifier(token);
 		req.userId = decoded.userId;
-		done();
+		// done();
 	} catch (e) {
-		done(e);
+		return e;
 	}
 }

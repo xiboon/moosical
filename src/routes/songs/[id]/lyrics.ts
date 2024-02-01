@@ -6,6 +6,7 @@ export const routes = {
 			req: FastifyRequest<{ Params: { id: string } }>,
 			res: FastifyReply,
 		) => {
+			console.log("uh");
 			const dbSong = await req.db.song.findUnique({
 				where: { id: parseInt(req.params.id) },
 			});
