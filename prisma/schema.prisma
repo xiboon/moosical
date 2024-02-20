@@ -19,6 +19,9 @@ model User {
     avatarExtension String?
     lastValidToken  DateTime?
     playlists       Playlist[]
+    favoriteSongs   String?
+    favoriteAlbums  String?
+    favoriteArtists String?
 }
 
 model Artist {
@@ -29,6 +32,7 @@ model Artist {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     Song      Song[]
+    userId    Int?
 }
 
 model Album {
@@ -39,6 +43,7 @@ model Album {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     Artist    Artist?  @relation(fields: [artistId], references: [id])
+    userId    Int?
 }
 
 model Playlist {
@@ -69,5 +74,4 @@ model Song {
     album              Album?   @relation(fields: [albumId], references: [id])
     artist             Artist?  @relation(fields: [artistId], references: [id])
     albumId            Int?
-    coverArtFormat     String?
 }

@@ -1,11 +1,10 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
 export async function verifyJWT(req: FastifyRequest, res: FastifyReply, done) {
-	console.log("request receive");
-	const nonAuthRoutes = ["/users/register", "/users/auth", "/albums/amount"];
+	const nonAuthRoutes = ["/users/register", "/users/auth", "/songs/amount"];
 	if (
 		nonAuthRoutes.includes(req.url) ||
-		(req.url.startsWith("/albums") && req.url.endsWith("cover"))
+		(req.url.startsWith("/songs") && req.url.endsWith("cover"))
 	) {
 		return done();
 	}

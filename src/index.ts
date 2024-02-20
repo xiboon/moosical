@@ -17,7 +17,9 @@ import { LyricsProvider } from "./classes/LyricsProvider.js";
 import { Transformers } from "./classes/Transformers.js";
 import { plugin } from "./util/loadRoutes.js";
 import { permissions } from "./util/permissions.js";
-
+import sharp from "sharp";
+import { cpus } from "os";
+sharp.concurrency(cpus().length - 1);
 const mainDir = import.meta.url
 	.replace("file://", "")
 	.split("/")
@@ -42,6 +44,7 @@ const songIndexer = new SongIndexer(
 	songManager,
 	process.env.MUSIC_PATH.split(";"),
 	imagePath,
+	lyricPath,
 );
 const transformers = new Transformers(db);
 const lyricsProvider = new LyricsProvider(lyricPath);
@@ -110,4 +113,6 @@ songIndexer.indexSongs().then(() => {
 	app.listen({ port: parseInt(process.env.PORT) }, () => {
 		console.log(`Server is running on port ${process.env.PORT}`);
 	});
+	console.log(sharp.simd(), "simd");
+	console.log(sharp.concurrency(), "concurrency");
 });

@@ -31,7 +31,6 @@ export class Transformers {
 			featuredArtists,
 			album,
 			duration: song.duration,
-			format: song.coverArtFormat,
 		};
 	}
 	async transformAlbum(album: Album, includeSongs = true) {

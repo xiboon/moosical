@@ -2,7 +2,7 @@
 a work in progress self-hosted music streaming service
 
 ## TODO
-- [ ] comments and ratings for songs/albums
+- [ ] comments and ratings for songs/albums (maybe)
 - [ ] favorites for artists/songs/albums
 - [x] handle lack of api tokens
 - [ ] an api to generate queue's based on user's listening preferences (possibly using markov chains)
@@ -12,4 +12,4 @@ a work in progress self-hosted music streaming service
 - [ ] custom daily mixes for users
 - [x] user system
 - [x] uploading songs
-- [x] permissions systems
+- [x] permissions systems   

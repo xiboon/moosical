@@ -19,9 +19,9 @@ export const routes = {
 				.createHash("sha1")
 				.update(artist.name + song.title)
 				.digest("hex");
-			const coverPath = `${req.imagePath}/${hash}.${song.coverArtFormat}`;
+			const coverPath = `${req.imagePath}/${hash}.webp`;
 			const file = await readFile(coverPath);
-			res.type(`image/${song.coverArtFormat}`);
+			res.type("image/webp");
 			return res.send(file);
 		},
 	},
