@@ -5,7 +5,7 @@ export const routes = {
 		handler: async (
 			req: FastifyRequest<{
 				Params: { id: string };
-				Querystring: {
+				Body: {
 					limit: string;
 					offset: string;
 				};
@@ -13,7 +13,14 @@ export const routes = {
 			res: FastifyReply,
 		) => {
 			const id = parseInt(req.params.id);
-			const playlist = await req.db.playlist.findUnique({ where: { id } });
+			const playlist = await req.db.playlist.findUnique({
+				where: { id },
+				select: {
+					public: true,
+					userId: true,
+				},
+			});
+
 			if (!playlist) {
 				res.code(404).send({ error: "Playlist not found" });
 				return;
@@ -22,7 +29,26 @@ export const routes = {
 				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
-			res.send(await req.transformers.transformPlaylist(playlist, false));
+			const songs = playlist.songIds.split(" ").map(parseInt);
+			const limit = parseInt(req.body.limit) || 50;
+			if (limit > 100) {
+				res.code(400).send({ error: "Limit too high" });
+				return;
+			}
+			const offset = parseInt(req.body.offset) || 0;
+			const songIds = songs.slice(offset, offset + limit);
+			const songsData = await req.db.song.findMany({
+				where: {
+					id: {
+						in: songIds,
+					},
+				},
+			});
+			res.send(
+				await Promise.all(
+					songsData.map((e) => req.transformers.transformSong(e, false)),
+				),
+			);
 		},
 	},
 	put: {
@@ -48,6 +74,7 @@ export const routes = {
 			const playlist = await req.db.playlist.findUnique({
 				where: { id: parseInt(req.params.id) },
 			});
+
 			if (!playlist) {
 				res.code(404).send({ error: "Playlist not found" });
 				return;
@@ -56,6 +83,7 @@ export const routes = {
 				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
+
 			const songs = await req.db.song.findMany({
 				where: {
 					id: {
@@ -63,17 +91,11 @@ export const routes = {
 					},
 				},
 			});
+
 			if (songs.length !== req.body.songIds.length) {
 				res.code(400).send({ error: "Invalid songIds" });
 				return;
 			}
-			const updatedPlaylist = await req.db.playlist.update({
-				where: { id },
-				data: {
-					songIds: playlist.songIds.split(" ").concat(songIds).join(" "),
-				},
-			});
-			res.send(await req.transformers.transformPlaylist(updatedPlaylist, true));
 		},
 	},
 	delete: {
@@ -100,15 +122,15 @@ export const routes = {
 				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
-			await req.db.playlist.update({
-				where: { id },
-				data: {
-					songIds: playlist.songIds
-						.split(" ")
-						.filter((e) => !req.body.songIds.includes(parseInt(e)))
-						.join(" "),
-				},
-			});
+			// await req.db.playlist.update({
+			// 	where: { id },
+			// 	data: {
+			// 		songIds: playlist.songIds
+			// 			.split(" ")
+			// 			.filter((e) => !req.body.songIds.includes(parseInt(e)))
+			// 			.join(" "),
+			// 	},
+			// });
 			res.send({ success: true });
 		},
 	},

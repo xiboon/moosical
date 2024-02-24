@@ -87,14 +87,17 @@ export class Transformers {
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		let songs: Record<string, any>[] = [];
 		if (includeSongs) {
+			const songIds = await this.db.playlistPosition.findMany({
+				where: {
+					playlistId: playlist.id,
+				},
+			});
 			songs = await Promise.all(
 				(
 					await this.db.song.findMany({
-						where: {
-							id: { in: playlist.songIds.split(" ").map((e) => parseInt(e)) },
-						},
+						where: { id: { in: songIds.map((e) => e.songId) } },
 					})
-				).map((e) => this.transformSong(e)),
+				).map((e) => this.transformSong(e, false)),
 			);
 		}
 		const author = await this.db.user.findUnique({

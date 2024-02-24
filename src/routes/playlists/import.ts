@@ -55,8 +55,14 @@ export const routes = {
 				data: {
 					title: "Imported Playlist",
 					description: "This playlist was imported from a text file",
-					songIds: bestMatchesArray.map((e) => e.id).join(" "),
 				},
+			});
+			await req.db.playlistPosition.create({
+				data: bestMatchesArray.map((e, i) => ({
+					playlistId: playlist.id,
+					songId: e.id,
+					position: i,
+				})),
 			});
 			res.send(await req.transformers.transformPlaylist(playlist, false));
 		},

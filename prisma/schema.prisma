@@ -57,7 +57,6 @@ model Playlist {
     id          Int      @id @default(autoincrement())
     title       String
     description String?
-    songIds     String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     public      Boolean  @default(true)
@@ -65,20 +64,31 @@ model Playlist {
     userId      Int?
 }
 
+model PlaylistPosition {
+    playlistId Int
+    songId     Int
+    position   Int
+    dateAdded  DateTime @default(now())
+    Song       Song     @relation(fields: [songId], references: [id])
+
+    @@id([songId, playlistId])
+}
+
 model Song {
-    id                 Int      @id @default(autoincrement())
+    id                 Int                @id @default(autoincrement())
     title              String
     artistId           Int
     featuredArtistsIds String
     duration           Int
     filename           String
     // for future use maybe
-    listens            Int?     @default(0)
-    like               Int?     @default(0)
-    dislike            Int?     @default(0)
-    createdAt          DateTime @default(now())
-    updatedAt          DateTime @updatedAt
-    album              Album?   @relation(fields: [albumId], references: [id])
-    artist             Artist?  @relation(fields: [artistId], references: [id])
+    listens            Int?               @default(0)
+    like               Int?               @default(0)
+    dislike            Int?               @default(0)
+    createdAt          DateTime           @default(now())
+    updatedAt          DateTime           @updatedAt
+    album              Album?             @relation(fields: [albumId], references: [id])
+    artist             Artist?            @relation(fields: [artistId], references: [id])
     albumId            Int?
+    PlaylistPosition   PlaylistPosition[]
 }
