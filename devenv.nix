@@ -22,10 +22,5 @@
     LD_LIBRARY_PATH = "";
   };
 
-  enterShell = ''
-  npx prisma generate
-  npx tsc
-  '';
-
   processes.moosical.exec = "npm start";
 }
