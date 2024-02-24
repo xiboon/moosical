@@ -32,6 +32,13 @@ model Artist {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     Song      Song[]
+}
+
+model Stream {
+    id        Int      @id @default(autoincrement())
+    artistId  Int
+    songId    Int
+    createdAt DateTime @default(now())
     userId    Int?
 }
 

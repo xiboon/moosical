@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-
+// TODO: add pagination for big playlists
 export const routes = {
 	get: {
 		handler: async (
@@ -16,7 +16,7 @@ export const routes = {
 				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
-			res.send(await req.transformers.transformPlaylist(playlist, true));
+			res.send(await req.transformers.transformPlaylist(playlist, false));
 		},
 	},
 

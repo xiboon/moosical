@@ -29,7 +29,7 @@ export class Transformers {
 			title: song.title,
 			artist,
 			featuredArtists,
-			album,
+			album: album ? await this.transformAlbum(album, false) : null,
 			duration: song.duration,
 		};
 	}

@@ -62,10 +62,10 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 }
 
 app.register(cookie);
+app.register(fastifyAuth);
 app.register(fastifyMultipart, {
 	limits: { fileSize: 1024 * 1024 * 1024 * 100, files: 1, fields: 0 },
 });
-app.register(fastifyAuth);
 app.register(cors, {
 	origin: process.env.CORS_ORIGIN,
 	credentials: true,
@@ -109,10 +109,9 @@ await db.user.upsert({
 	},
 });
 
-songIndexer.indexSongs().then(() => {
-	app.listen({ port: parseInt(process.env.PORT) }, () => {
-		console.log(`Server is running on port ${process.env.PORT}`);
-	});
-	console.log(sharp.simd(), "simd");
-	console.log(sharp.concurrency(), "concurrency");
+app.listen({ port: parseInt(process.env.PORT) }, () => {
+	songIndexer.indexSongs();
+	console.log(`Server is running on port ${process.env.PORT}`);
 });
+console.log(sharp.simd(), "simd");
+console.log(sharp.concurrency(), "concurrency");
