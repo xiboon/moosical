@@ -7,7 +7,7 @@ RUN apk add --no-cache ffmpeg vips
 
 COPY . .
 RUN npm install
-RUN npx prisma generate 
+RUN npx prisma db push
 RUN npx tsc
 
 CMD [ "npm", "start" ]
