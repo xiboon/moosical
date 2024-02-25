@@ -29,7 +29,10 @@ export const routes = {
 				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
-			const songs = playlist.songIds.split(" ").map(parseInt);
+			const songs = await req.db.playlistPosition.findMany({
+				where: { playlistId: id },
+				select: { songId: true },
+			});
 			const limit = parseInt(req.body.limit) || 50;
 			if (limit > 100) {
 				res.code(400).send({ error: "Limit too high" });
@@ -40,7 +43,7 @@ export const routes = {
 			const songsData = await req.db.song.findMany({
 				where: {
 					id: {
-						in: songIds,
+						in: songIds.map((e) => e.songId),
 					},
 				},
 			});

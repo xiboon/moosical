@@ -1,6 +1,7 @@
 import { distance } from "fastest-levenshtein";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { join } from "path";
+import { env } from "../../util/env.js";
 export const routes = {
 	get: {
 		handler: async (
@@ -65,7 +66,7 @@ export const routes = {
 				return res.code(400).send({ error: "Invalid file" });
 			const song = await req.songIndexer.parseSongFromData(
 				await songFile.toBuffer(),
-				join(req.musicPath, songFile.filename),
+				join(env.MUSIC_PATH, songFile.filename),
 			);
 			if (!song) return res.code(400).send({ error: "Invalid file" });
 			const songData = await req.db.song.findFirst({ where: { id: song } });

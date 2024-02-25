@@ -48,7 +48,7 @@ export class SongManager {
 		albumId: number;
 		artistId: number;
 		duration: number;
-		featuredArtistsIds: string;
+		featuredArtistsIds: number[];
 		filename: string;
 		coverArtFormat?: string;
 	}) {
@@ -79,7 +79,7 @@ export class SongManager {
 		const artist = await this.addArtist(song.artist);
 		const featuredArtists = await Promise.all(
 			song.featuredArtists.map(async (e) => {
-				return (await this.addArtist(e)).toString();
+				return await this.addArtist(e);
 			}),
 		);
 
@@ -91,7 +91,7 @@ export class SongManager {
 			artistId: artist,
 			duration: song.duration,
 			filename: song.filename,
-			featuredArtistsIds: featuredArtists.join(" "),
+			featuredArtistsIds: featuredArtists,
 			coverArtFormat: song.coverArtFormat,
 		});
 	}

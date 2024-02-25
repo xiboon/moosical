@@ -33,7 +33,7 @@ export const routes = {
 						res.send({ error: "Forbidden" });
 						return;
 					}
-					if (!user.permissions.split(" ").includes("MANAGE_USERS")) {
+					if (!user.permissions.includes("MANAGE_USERS")) {
 						res.status(403);
 						res.send({ error: "Forbidden" });
 						return;

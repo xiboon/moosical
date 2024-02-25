@@ -6,15 +6,12 @@ export class Transformers {
 		const artist = await this.db.artist.findUnique({
 			where: { id: song.artistId },
 		});
-		const artistIds = song.featuredArtistsIds
-			.split(" ")
-			.map((e) => parseInt(e));
-		const featuredArtists = Number.isNaN(artistIds[0])
+		const featuredArtists = Number.isNaN(song.featuredArtistsIds?.length)
 			? []
 			: await this.db.artist.findMany({
 					where: {
 						id: {
-							in: song.featuredArtistsIds.split(" ").map((e) => parseInt(e)),
+							in: song.featuredArtistsIds,
 						},
 					},
 			  });

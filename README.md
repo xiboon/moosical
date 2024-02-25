@@ -10,6 +10,9 @@ a work in progress self-hosted music streaming service
 - [ ] artist/album descriptions and reviews from various sources
 - [x] ffmpeg streaming instead of waiting for the whole file to transcode 
 - [ ] custom daily mixes for users
+- [ ] better logging
+- [ ] prometheus statistics (+ grafana)
+- [ ] admin panel routes 
 - [x] user system
 - [x] uploading songs
 - [x] permissions systems   

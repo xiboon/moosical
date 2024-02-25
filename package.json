@@ -5,13 +5,12 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prisma": "npx prisma db push",
     "build": "tsc",
     "dev": "tsc && node dist/index.js",
     "lint": "biome lint",
-    "reset-db": "rm db.sqlite3 && rm -r covers && npx prisma db push",
     "format": "biome format",
-    "start": "node ."
+    "reset-db": "rm db.sqlite3 && rm -rf covers && npx prisma db push",
+    "docker": "npx prisma db push && npm start"
   },
   "author": "xiboon",
   "license": "MIT",

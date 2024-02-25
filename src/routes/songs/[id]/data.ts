@@ -4,6 +4,7 @@ import { createReadStream, createWriteStream, existsSync } from "fs";
 import { readFile } from "fs/promises";
 import { join } from "path";
 import mime from "mime";
+import { env } from "../../../util/env.js";
 // import Ffmpeg from "fluent-ffmpeg";
 // import { Writable } from "stream";
 export const routes = {
@@ -34,7 +35,7 @@ export const routes = {
 
 			const formatExtension = format === "opus" ? "ogg" : "flac";
 			const filename = join(
-				req.musicPath,
+				env.MUSIC_PATH,
 				`${req.params.id}.transcoded${req.query.quality}.${formatExtension}`,
 			);
 			if (!ignore) {

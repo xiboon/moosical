@@ -11,8 +11,6 @@ declare module "fastify" {
 		songManager: SongManager;
 		songIndexer: SongIndexer;
 		lyricsProvider: LyricsProvider;
-		musicPath: string;
-		imagePath: string;
 		transformers: Transformers;
 		userId: number;
 		// biome-ignore lint: h

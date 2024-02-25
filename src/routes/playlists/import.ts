@@ -57,7 +57,7 @@ export const routes = {
 					description: "This playlist was imported from a text file",
 				},
 			});
-			await req.db.playlistPosition.create({
+			await req.db.playlistPosition.createMany({
 				data: bestMatchesArray.map((e, i) => ({
 					playlistId: playlist.id,
 					songId: e.id,

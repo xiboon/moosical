@@ -24,7 +24,6 @@ export const routes = {
 				data: {
 					title: name,
 					description,
-					songIds: "",
 				},
 			});
 			res.send(await req.transformers.transformPlaylist(playlist, true));

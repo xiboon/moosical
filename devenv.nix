@@ -10,9 +10,8 @@
     ffmpeg
     vips
     openssl
-    nodePackages.prisma
   ];
-
+  dotenv.disableHint = true;
   env = with pkgs; {
     PRISMA_SCHEMA_ENGINE_BINARY = "${prisma-engines}/bin/schema-engine";
     PRISMA_QUERY_ENGINE_BINARY = "${prisma-engines}/bin/query-engine";

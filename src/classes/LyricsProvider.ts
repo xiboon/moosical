@@ -3,9 +3,12 @@ import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
 import crypto from "node:crypto";
 import { existsSync } from "fs";
+import { env } from "../util/env.js";
 export class LyricsProvider {
 	genius: Genius.Client;
-	constructor(public lyricPath: string) {
+	lyricPath: string;
+	constructor() {
+		this.lyricPath = env.LYRICS_PATH;
 		this.genius = new Genius.Client(process.env.GENIUS_TOKEN);
 	}
 	async findLyrics(artist: string, title: string, featuredArtists?: string[]) {

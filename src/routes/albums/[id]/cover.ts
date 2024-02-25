@@ -3,6 +3,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { existsSync } from "fs";
 import crypto from "crypto";
 import { readFile, writeFile } from "fs/promises";
+import { env } from "../../../util/env.js";
 export const routes = {
 	get: {
 		handler: async (
@@ -27,7 +28,7 @@ export const routes = {
 				.createHash("sha1")
 				.update(`${album.artistId}${album.title}`)
 				.digest("hex");
-			const coverPath = `${req.imagePath}/album_${hash}.jpg`;
+			const coverPath = `${env.IMAGE_PATH}/album_${hash}.jpg`;
 			if (existsSync(coverPath)) {
 				return res.type("image/jpeg").send(await readFile(coverPath));
 			}

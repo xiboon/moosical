@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { readFile, writeFile } from "fs/promises";
 import crypto from "crypto";
+import { env } from "../../../util/env.js";
 export const routes = {
 	post: {
 		handler: async (
@@ -15,7 +16,7 @@ export const routes = {
 				where: { id: req.userId },
 			});
 			if (req.params.id !== "me") {
-				if (!authorUser?.permissions.split(" ").includes("MANAGE_USERS")) {
+				if (!authorUser?.permissions.includes("MANAGE_USERS")) {
 					res.code(403).send({ error: "Forbidden" });
 					return;
 				}
@@ -35,7 +36,7 @@ export const routes = {
 				return res.code(400).send({ error: "Invalid file" });
 			const hash = crypto.createHash("sha1").update(user.name).digest("hex");
 			await writeFile(
-				`${req.imagePath}/user_${hash}.${image.mimetype.split("image/")[1]}`,
+				`${env.IMAGE_PATH}/user_${hash}.${image.mimetype.split("image/")[1]}`,
 				await image.toBuffer(),
 			);
 			await req.db.user.update({
@@ -56,7 +57,7 @@ export const routes = {
 			if (!user) return res.code(404).send({ error: "User not found" });
 			const hash = crypto.createHash("sha1").update(user.name).digest("hex");
 			const file = await readFile(
-				`${req.imagePath}/user_${hash}.${user.avatarExtension}`,
+				`${env.IMAGE_PATH}/user_${hash}.${user.avatarExtension}`,
 			);
 			res.type(`image/${user.avatarExtension}`);
 			res.send(file);

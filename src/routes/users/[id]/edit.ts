@@ -13,9 +13,7 @@ export const routes = {
 			const requestUser = await req.db.user.findUnique({
 				where: { id: req.userId },
 			});
-			const manageUsers = requestUser?.permissions
-				.split(" ")
-				.includes("MANAGE_USERS");
+			const manageUsers = requestUser?.permissions.includes("MANAGE_USERS");
 
 			if (req.userId !== parseInt(req.params.id) && !manageUsers) {
 				res.code(403).send({ error: "Forbidden" });

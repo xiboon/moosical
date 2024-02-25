@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { readFile } from "fs/promises";
 import crypto from "crypto";
+import { env } from "../../../util/env.js";
 
 export const routes = {
 	get: {
@@ -19,7 +20,7 @@ export const routes = {
 				.createHash("sha1")
 				.update(artist.name + song.title)
 				.digest("hex");
-			const coverPath = `${req.imagePath}/${hash}.webp`;
+			const coverPath = `${env.IMAGE_PATH}/${hash}.webp`;
 			const file = await readFile(coverPath);
 			res.type("image/webp");
 			return res.send(file);

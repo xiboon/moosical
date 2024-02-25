@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
@@ -15,7 +15,7 @@ model User {
     password        String
     name            String     @unique
     createdAt       DateTime   @default(now())
-    permissions     String     @default("")
+    permissions     String[]   @default([])
     avatarExtension String?
     lastValidToken  DateTime?
     playlists       Playlist[]
@@ -54,22 +54,24 @@ model Album {
 }
 
 model Playlist {
-    id          Int      @id @default(autoincrement())
+    id          Int                @id @default(autoincrement())
     title       String
     description String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    public      Boolean  @default(true)
-    User        User?    @relation(fields: [userId], references: [id])
+    createdAt   DateTime           @default(now())
+    updatedAt   DateTime           @updatedAt
+    public      Boolean            @default(true)
+    songs       PlaylistPosition[]
+    User        User?              @relation(fields: [userId], references: [id])
     userId      Int?
 }
 
 model PlaylistPosition {
     playlistId Int
     songId     Int
-    position   Int
+    position   Int      @default(autoincrement())
     dateAdded  DateTime @default(now())
     Song       Song     @relation(fields: [songId], references: [id])
+    Playlist   Playlist @relation(fields: [playlistId], references: [id])
 
     @@id([songId, playlistId])
 }
@@ -78,7 +80,7 @@ model Song {
     id                 Int                @id @default(autoincrement())
     title              String
     artistId           Int
-    featuredArtistsIds String
+    featuredArtistsIds Int[]
     duration           Int
     filename           String
     // for future use maybe

@@ -7,16 +7,20 @@ import { appendFile, readFile, rename, writeFile } from "fs/promises";
 import { existsSync } from "fs";
 import sharp from "sharp";
 import mime from "mime";
+import { env } from "../util/env.js";
 
 export class SongIndexer {
 	finishedAlbums: string[] = [];
+	coverPath: string;
+	lyricPath: string;
 	constructor(
 		private db: PrismaClient,
 		private manager: SongManager,
 		private songPaths: string[],
-		private coverPath: string,
-		private lyricPath: string,
-	) {}
+	) {
+		this.coverPath = env.IMAGE_PATH;
+		this.lyricPath = env.LYRICS_PATH;
+	}
 
 	async indexSongs() {
 		console.log("Starting indexing");

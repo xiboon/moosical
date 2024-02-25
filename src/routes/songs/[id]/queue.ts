@@ -18,7 +18,7 @@ export const routes = {
 			const songsArtistFeaturedOn = await req.db.song.findMany({
 				where: {
 					featuredArtistsIds: {
-						contains: req.userId.toString(),
+						has: song.artistId,
 					},
 				},
 			});
@@ -35,7 +35,7 @@ export const routes = {
 					weight *= 2;
 				}
 				if (featuredIds.includes(e.id)) {
-					weight *= 2 / e.featuredArtistsIds.split(",").length;
+					weight *= 2 / e.featuredArtistsIds.length;
 				}
 				e.weight = weight;
 				const array = [];
