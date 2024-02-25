@@ -11,7 +11,9 @@
     vips
     openssl
   ];
+
   dotenv.disableHint = true;
+  
   env = with pkgs; {
     PRISMA_SCHEMA_ENGINE_BINARY = "${prisma-engines}/bin/schema-engine";
     PRISMA_QUERY_ENGINE_BINARY = "${prisma-engines}/bin/query-engine";
@@ -21,5 +23,11 @@
     LD_LIBRARY_PATH = "";
   };
 
-  processes.moosical.exec = "npm start";
+  services.postgres = {
+    enable = true;
+    listen_addresses = "127.0.0.1";
+    initialScript = ''
+    CREATE USER moosical WITH ENCRYPTED PASSWORD '1234' SUPERUSER;
+    '';
+  };
 }

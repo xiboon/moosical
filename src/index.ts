@@ -14,7 +14,7 @@ import { SongManager } from "./classes/SongManager.js";
 import { SongIndexer } from "./classes/SongIndexer.js";
 import { LyricsProvider } from "./classes/LyricsProvider.js";
 import { Transformers } from "./classes/Transformers.js";
-import { plugin } from "./util/loadRoutes.js";
+import { routesPlugin } from "./util/loadRoutes.js";
 import { permissions } from "./util/permissions.js";
 import sharp from "sharp";
 import { cpus } from "os";
@@ -48,7 +48,7 @@ app.register(cors, {
 	origin: process.env.CORS_ORIGIN,
 	credentials: true,
 });
-app.register(plugin, { path: join(mainDir, "routes") });
+app.register(routesPlugin, { path: join(mainDir, "routes") });
 
 const verifier = createVerifier({
 	key: process.env.JWT_SECRET,
@@ -86,4 +86,5 @@ await db.user.upsert({
 app.listen({ port: parseInt(process.env.PORT) }, () => {
 	songIndexer.indexSongs();
 	console.log(`Server is running on port ${process.env.PORT}`);
+	console.log("h");
 });

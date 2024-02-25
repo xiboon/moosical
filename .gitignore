@@ -2,8 +2,6 @@ node_modules
 # Keep environment variables out of version control
 .env
 db.sqlite3
-package-lock.json
 lyrics
 covers
 dist
-.secrets.json

@@ -15,7 +15,7 @@ export type Routes = Record<
 		handler: (req: FastifyRequest, res: FastifyReply) => void;
 	}
 >;
-export function plugin(
+export function routesPlugin(
 	instance: FastifyInstance,
 	opts: FastifyPluginOptions,
 	done,
@@ -30,7 +30,10 @@ export async function loadRoutes(
 	// console.log(initialPath);
 	const files = await readdir(path, { withFileTypes: true });
 	for (const file of files) {
-		if (file.isDirectory() || !file.name.endsWith(".js")) {
+		if (
+			file.isDirectory() ||
+			(!file.name.endsWith(".js") && !file.name.endsWith(".ts"))
+		) {
 			await loadRoutes(join(path, file.name), instance, initialPath || path);
 		} else {
 			if (file.path.endsWith(".map")) continue;

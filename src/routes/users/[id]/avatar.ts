@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { readFile, writeFile } from "fs/promises";
 import crypto from "crypto";
+import mime from "mime";
 import { env } from "../../../util/env.js";
 export const routes = {
 	post: {
@@ -55,11 +56,17 @@ export const routes = {
 				where: { id: parseInt(req.params.id) },
 			});
 			if (!user) return res.code(404).send({ error: "User not found" });
-			const hash = crypto.createHash("sha1").update(user.name).digest("hex");
-			const file = await readFile(
-				`${env.IMAGE_PATH}/user_${hash}.${user.avatarExtension}`,
-			);
-			res.type(`image/${user.avatarExtension}`);
+			let file;
+			try {
+				const hash = crypto.createHash("sha1").update(user.name).digest("hex");
+				file = await readFile(
+					`${env.IMAGE_PATH}/user_${hash}.${user.avatarExtension}`,
+				);
+			} catch (e) {
+				return res.code(404).send({ error: "File not found" });
+			}
+			const mimetype = mime.getType(user.avatarExtension);
+			res.type(mimetype);
 			res.send(file);
 		},
 	},
