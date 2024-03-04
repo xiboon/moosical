@@ -2,16 +2,16 @@
   "name": "moosical",
   "version": "1.0.0",
   "description": "backend for moosical",
+  "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "lint": "biome lint",
-    "format": "biome format",
-    "start": "node dist/index.js",
-    "reset-db": "npx prisma db push --force-reset && rm -rf covers",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "reset-db": "prisma db push --force-reset && rm -rf covers",
     "dev": "tsx --watch src/index.ts",
-    "docker": "npx prisma db push && npm start"
+    "docker": "prisma db push && npm start"
   },
   "author": "xiboon",
   "license": "MIT",
@@ -43,6 +43,5 @@
     "prisma": "^5.6.0",
     "sharp": "^0.33.2"
   },
-  "type": "module",
   "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2"
 }
