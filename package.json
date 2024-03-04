@@ -2,6 +2,7 @@
   "name": "moosical",
   "version": "1.0.0",
   "description": "backend for moosical",
+  "private": true,
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
