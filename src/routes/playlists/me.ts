@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-// TODO: add search here and shit
+
 export const routes = {
 	get: {
 		handler: async (req: FastifyRequest, res: FastifyReply) => {

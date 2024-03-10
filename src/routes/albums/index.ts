@@ -1,4 +1,3 @@
-import { distance } from "fastest-levenshtein";
 import { FastifyRequest, FastifyReply } from "fastify";
 
 export const routes = {
@@ -8,35 +7,29 @@ export const routes = {
 			res: FastifyReply,
 		) => {
 			const limit = parseInt(req.query.limit) || 25;
+			const search = req.query.search;
+			if (search.length > 50) {
+				res.code(400).send({ error: "Search string too long" });
+				return;
+			}
+
 			if (Number.isNaN(limit)) {
 				res.code(400).send({ error: "Limit must be a number" });
 				return;
 			}
-			const allAlbums = await req.db.album.findMany();
-			const distanceArray = allAlbums.map(async (album) => {
-				const artist = await req.db.artist.findUnique({
-					where: { id: album.artistId },
-				});
-				let distanceNum =
-					distance(req.query.search, album.title) / album.title.length;
-
-				if (
-					artist.name.toLowerCase().startsWith(req.query.search.toLowerCase())
-				)
-					distanceNum = distanceNum / 2;
-
-				return {
-					distance: distanceNum,
-					album,
-				};
+			const rawAlbums = await req.db.album.findMany({
+				orderBy: {
+					_relevance: {
+						fields: ["title"],
+						search,
+						sort: "desc",
+					},
+				},
+				take: limit,
 			});
-			const sortedAlbums = (await Promise.all(distanceArray)).sort(
-				(a, b) => a.distance - b.distance,
-			);
+
 			const albums = await Promise.all(
-				sortedAlbums
-					.slice(0, limit)
-					.map((e) => req.transformers.transformAlbum(e.album)),
+				rawAlbums.map((e) => req.transformers.transformAlbum(e)),
 			);
 			res.code(200).send(albums);
 		},

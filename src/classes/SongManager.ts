@@ -50,7 +50,7 @@ export class SongManager {
 		duration: number;
 		featuredArtistsIds: number[];
 		filename: string;
-		coverArtFormat?: string;
+		artistName: string;
 	}) {
 		const {
 			title,
@@ -59,7 +59,7 @@ export class SongManager {
 			duration,
 			featuredArtistsIds,
 			filename,
-			coverArtFormat,
+			artistName,
 		} = data;
 		const { id } = await this.db.song.create({
 			data: {
@@ -67,6 +67,7 @@ export class SongManager {
 				album: { connect: { id: albumId } },
 				artist: { connect: { id: artistId } },
 				duration,
+				artistName,
 				featuredArtistsIds,
 				filename,
 			},
@@ -92,7 +93,7 @@ export class SongManager {
 			duration: song.duration,
 			filename: song.filename,
 			featuredArtistsIds: featuredArtists,
-			coverArtFormat: song.coverArtFormat,
+			artistName: song.artist,
 		});
 	}
 }

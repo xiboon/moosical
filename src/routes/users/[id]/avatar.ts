@@ -56,7 +56,7 @@ export const routes = {
 				where: { id: parseInt(req.params.id) },
 			});
 			if (!user) return res.code(404).send({ error: "User not found" });
-			let file;
+			let file: Buffer;
 			try {
 				const hash = crypto.createHash("sha1").update(user.name).digest("hex");
 				file = await readFile(

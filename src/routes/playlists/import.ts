@@ -1,8 +1,7 @@
-import { distance } from "fastest-levenshtein";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 export const routes = {
-	get: {
+	post: {
 		handler: async (
 			req: FastifyRequest<{ Body: { songs: string[] } }>,
 			res: FastifyReply,
@@ -16,53 +15,41 @@ export const routes = {
 				res.send({ error: "No songs provided" });
 				return;
 			}
-			const songs = req.body.songs.map((e) => ({
-				artist: e.split(" - ")[0],
-				title: e.split(" - ")[1],
-			}));
+			const songs = req.body.songs;
 			const allSongs = await req.db.song.findMany();
-			const bestMatches = songs.map(async (song) => {
-				let lowestDistance = 100;
-				const distanceMap = allSongs.map(async (e) => {
-					let distanceNum = 0;
-					// if the song doesn't start with the search string calculate the distance
-					distanceNum = distance(song.title, e.title) / e.title.length;
-					if (lowestDistance < distanceNum) return;
-					// if the artist doesn't start with the search string calculate the distance
-					const artist = await req.db.artist.findUnique({
-						where: { id: e.artistId },
+			try {
+				const bestMatches = songs.map(async (song) => {
+					const bestMatch = await req.db.song.findMany({
+						orderBy: {
+							_relevance: {
+								fields: ["artistName"],
+								search: "epic test",
+								sort: "asc",
+							},
+						},
 					});
-
-					if (song.artist.toLowerCase() !== artist.name.toLowerCase())
-						distanceNum = distanceNum * 1.5;
-
-					if (distanceNum < lowestDistance) lowestDistance = distanceNum;
-
-					return {
-						distance: distanceNum,
-						song: e,
-					};
+					return bestMatch[0];
 				});
-				const sortedSongs = (await Promise.all(distanceMap))
-					.filter((e) => e !== undefined)
-					.sort((a, b) => a.distance - b.distance);
-				if (sortedSongs.length === 0) return;
-				const bestMatch = sortedSongs[0].song;
-				return bestMatch;
-			});
+			} catch (e) {
+				console.log(e);
+			}
 			const bestMatchesArray = await Promise.all(bestMatches);
 			const playlist = await req.db.playlist.create({
 				data: {
 					title: "Imported Playlist",
 					description: "This playlist was imported from a text file",
+					userId: req.userId,
+					public: false,
 				},
 			});
 			await req.db.playlistPosition.createMany({
-				data: bestMatchesArray.map((e, i) => ({
-					playlistId: playlist.id,
-					songId: e.id,
-					position: i,
-				})),
+				data: bestMatchesArray
+					.filter((e, i) => bestMatchesArray.indexOf(e) === i)
+					.map((e, i) => ({
+						playlistId: playlist.id,
+						songId: e.id,
+						position: i,
+					})),
 			});
 			res.send(await req.transformers.transformPlaylist(playlist, false));
 		},

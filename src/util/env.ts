@@ -24,21 +24,21 @@ export const env = createEnv({
 		type: "string",
 		optional: false,
 		parser(input) {
-			return input.startsWith("/") ? input : join(`${mainDir}/..`, input);
+			return input.startsWith("/") ? input : join(`${mainDir}/../../`, input);
 		},
 	},
 	IMAGE_PATH: {
 		type: "string",
 		optional: false,
 		parser(input) {
-			return input.startsWith("/") ? input : join(`${mainDir}/..`, input);
+			return input.startsWith("/") ? input : join(`${mainDir}/../..`, input);
 		},
 	},
 	LYRICS_PATH: {
 		type: "string",
 		optional: false,
 		parser(input) {
-			return input.startsWith("/") ? input : join(`${mainDir}/..`, input);
+			return input.startsWith("/") ? input : join(`${mainDir}/../..`, input);
 		},
 	},
 	GENIUS_TOKEN: {
@@ -72,7 +72,7 @@ if (generatedJwt) {
 	let envFile = await readFile(join(mainDir, "..", ".env"), "utf-8");
 	envFile =
 		envFile.indexOf("JWT_SECRET=") === -1
-			? envFile + `\nJWT_SECRET="${env.JWT_SECRET}"`
+			? `${envFile}\nJWT_SECRET="${env.JWT_SECRET}"`
 			: envFile.replace(/JWT_SECRET=.*/, `JWT_SECRET="${env.JWT_SECRET}"`);
 	await writeFile(join(mainDir, "..", ".env"), envFile);
 }
