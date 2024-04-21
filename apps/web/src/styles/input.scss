@@ -1,0 +1,75 @@
+input[type="text"],
+input[type="password"] {
+    font-family: 'Be Vietnam Pro';
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 20%);
+    color: white !important;
+    border: 0;
+    border-radius: 4px;
+    min-height: 16px;
+    padding: 0 8px;
+}
+
+
+
+.rc-slider {
+    width: 8vw;
+    position: relative;
+    height: 14px;
+    padding: 5px 0;
+    border-radius: 6px;
+    touch-action: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.rc-slider:hover {
+    .rc-slider-handle {
+        opacity: 1;
+    }
+
+}
+
+// .rc-slider * {
+//     box-sizing: border-box;
+//     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+// }
+
+.rc-slider-rail {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 10%) !important;
+}
+
+.rc-slider-track,
+.rc-slider-tracks {
+    position: absolute;
+    background-color: var(--color-primary) !important;
+    height: 4px;
+    background-color: #abe2fb;
+    border-radius: 6px;
+}
+
+.rc-slider-track-draggable {
+    z-index: 1;
+    box-sizing: content-box;
+    background-clip: content-box;
+    border-top: 5px solid rgba(0, 0, 0, 0);
+    border-bottom: 5px solid rgba(0, 0, 0, 0);
+    transform: translateY(-5px);
+}
+
+.rc-slider-handle {
+    position: absolute;
+    z-index: 1;
+    width: 14px;
+    opacity: 0;
+    height: 14px;
+    margin-top: -5px;
+    border-radius: 50%;
+    background-color: white;
+    touch-action: pan-x;
+}

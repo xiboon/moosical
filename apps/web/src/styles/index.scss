@@ -1,0 +1,93 @@
+@import 'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Kanit:wght@600;700;800&display=swap';
+
+
+:root {
+    --color-primary: #58f287;
+    --color-secondary: #45ddc0;
+    --color-background: #0f0f0f;
+    --color-background-secondary: #18191a;
+    --color-error: #d14e4e;
+    --color-warning: #e2bd27;
+}
+
+h1 {
+    font-family: Kanit;
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+h2,
+a,
+h3,
+h4,
+h5,
+h6,
+p {
+    font-family: 'Be Vietnam Pro';
+    font-weight: 600;
+    text-decoration: none;
+    color: white;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow-x: hidden;
+    color: white;
+    background-color: var(--color-background);
+}
+
+body {
+    margin: 0;
+}
+
+.main-content {
+    position: absolute;
+    border-radius: 10px;
+    left: calc(max(200px, 15vw) + 2px);
+    // padding-top: 8px;
+    background-color: var(--color-background-secondary);
+    overflow-y: auto;
+    overflow-x: hidden;
+    top: 8px;
+    width: calc(100vw - 8px - max(200px, 16vw) + 1vw);
+    height: max(80.8vh, calc(90vh - 36px));
+
+
+    &:has(.auth) {
+        left: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+}
+
+@media screen and (max-height: 800px) {
+    :root {
+        font-size: 14px;
+    }
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+    border-radius: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: var(--color-background-secondary);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: var(--color-primary);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #44bd68;
+    // overlay: brightness(1.2);
+}

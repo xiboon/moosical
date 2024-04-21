@@ -1,0 +1,6 @@
+.env
+node_modules
+dist
+lyrics
+covers
+db.sqlite3

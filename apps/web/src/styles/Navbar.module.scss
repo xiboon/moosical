@@ -1,0 +1,215 @@
+.nav {
+    display: flex;
+    flex-direction: column;
+    height: calc(90vh - 32px);
+    width: max(15vw, 200px);
+    background-color: var(--color-background-primary);
+    align-items: center;
+    padding: 8px 0;
+    justify-content: space-between;
+}
+
+/* routes section */
+.routes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 0.5vh;
+    width: 90%;
+    padding: 8px;
+    border-radius: 10px;
+    background-color: var(--color-background-secondary);
+
+
+    a {
+        display: flex;
+        align-items: center;
+        border-radius: 10px;
+        padding: 5px;
+        height: 3vh;
+        background-color: rgba(0, 0, 0, 20%);
+        transition: all 0.2s linear;
+
+        p {
+            color: inherit;
+            margin-left: 5px;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 30%);
+            color: var(--color-primary);
+        }
+    }
+}
+
+.playlist-header {
+    display: flex;
+    flex-direction: row;
+    width: 95%;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 1vh;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+        margin: 0;
+    }
+
+    button {
+        color: white;
+        background-color: rgba(0, 0, 0, 20%);
+        height: 3vh;
+        width: 3vh;
+        border: none;
+        margin: 0;
+        border-radius: 10px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s linear;
+
+        svg {
+            height: 60%;
+            width: 60%;
+        }
+
+        &:hover {
+            color: var(--color-primary);
+            background-color: rgba(0, 0, 0, 30%);
+        }
+    }
+}
+
+.playlists {
+    height: 80%;
+    width: 90%;
+    background-color: var(--color-background-secondary);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0.5vh;
+    padding: 8px;
+}
+
+.playlist-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    a {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: max(40px, 4.5vh);
+        border-radius: 10px;
+        width: 95%;
+        background-color: rgba(0, 0, 0, 20%);
+        padding: min(0.5vh, 16px) 0;
+        transition: all 0.2s linear;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 30%);
+            color: var(--color-primary);
+
+            p {
+                background-color: rgba(0, 0, 0, 0%)
+            }
+        }
+
+        p {
+            color: inherit;
+            background-color: rgba(0, 0, 0, 0%);
+        }
+
+        img {
+            margin-left: 10px;
+            margin-right: 10px;
+            height: 40px;
+            padding: 0;
+            width: 40px;
+            border-radius: 5px;
+        }
+    }
+}
+
+/* user section */
+.user {
+    height: 5vh;
+    margin-bottom: 0.5vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    padding-right: 8px;
+    padding-left: 8px;
+    border-radius: 10px;
+    transition: all 0.2s linear;
+    background-color: var(--color-background-secondary);
+
+    div>p {
+        color: inherit;
+    }
+
+    &:hover {
+        color: var(--color-primary);
+    }
+}
+
+.user>div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.avatar {
+    height: 3.5vh;
+    width: 3.5vh;
+    margin: 0;
+    margin-right: min(8px, 1vw);
+    padding: 0;
+}
+
+
+.settings-link {
+    text-decoration: none;
+    color: inherit;
+    margin-right: 5px;
+    border-radius: 10px;
+    height: 2vh;
+    width: 2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 20%);
+    transition: all 0.2s linear;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 40%);
+        transform: scale(1.05);
+    }
+}
+
+@media (max-height: 540px) {
+    .playlists {
+        height: 70%;
+    }
+
+    .playlist-list {
+        a {
+            width: 100%;
+        }
+    }
+
+    .user {
+        height: 8%;
+    }
+}

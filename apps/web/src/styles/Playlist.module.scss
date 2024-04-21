@@ -1,0 +1,25 @@
+.headerContainer {
+    height: 40vh;
+    background-size: 100% auto;
+    background-position: center;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 2vw;
+    padding-bottom: 5vh;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, var(--color-background-secondary) 100%);
+    width: 100%;
+    backdrop-filter: blur(40px) brightness(50%) saturate(80%);
+
+    img {
+        border-radius: 10px;
+        height: 60%;
+    }
+
+    div {
+        margin-left: 1vw;
+    }
+}

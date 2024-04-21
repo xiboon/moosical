@@ -1,9 +1,8 @@
 {
-  "name": "moosical",
-<<<<<<< HEAD
+  "name": "moosical-api",
   "version": "1.0.0",
   "private": true,
-  "description": "backend for moosical",
+  "description": "Backend API for moosical",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -19,6 +18,7 @@
     "@biomejs/biome": "^1.4.1",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.10.2",
+    "prisma": "^5.6.0",
     "tsx": "^4.7.1",
     "typescript": "^5.3.2"
   },
@@ -27,12 +27,14 @@
     "@fastify/cookie": "^9.2.0",
     "@fastify/cors": "^9.0.0",
     "@fastify/multipart": "^8.0.0",
+    "@fastify/send": "^2.1.0",
     "@lionralfs/discogs-client": "^4.0.0",
     "@napi-rs/canvas": "^0.1.51",
     "@prisma/client": "^5.6.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.3.1",
     "fast-jwt": "^3.3.2",
+    "fastest-levenshtein": "^1.0.16",
     "fastify": "^4.24.3",
     "genius-lyrics": "^4.4.6",
     "glob": "^10.3.10",
@@ -40,25 +42,8 @@
     "music-metadata": "^7.14.0",
     "neon-env": "^0.2.1",
     "prism-media": "^1.3.5",
-    "prisma": "^5.6.0",
     "sharp": "^0.33.2"
   },
   "type": "module",
-  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2"
-=======
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.7.0",
-    "turbo": "latest"
-  },
-  "packageManager": "pnpm@8.9.0",
-  "engines": {
-    "node": ">=18"
-  }
->>>>>>> 90180a4 (refactor: move to monorepo and add frontend)
+  "packageManager": "pnpm@8.9.0"
 }

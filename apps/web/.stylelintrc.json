@@ -1,0 +1,17 @@
+{
+    "extends": "stylelint-config-standard-scss",
+    "rules": {
+        "color-function-notation": "legacy",
+        "font-family-no-missing-generic-family-keyword": [
+            true,
+            {
+                "ignoreFontFamilies": [
+                    "Be Vietnam Pro",
+                    "Kanit"
+                ]
+            }
+        ],
+        "no-descending-specificity": null,
+        "media-feature-range-notation": null
+    }
+}
