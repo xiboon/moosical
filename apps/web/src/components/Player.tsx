@@ -1,5 +1,6 @@
 import Slider from "rc-slider";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { IoIosRepeat, IoIosShuffle } from "react-icons/io";
 import {
@@ -20,7 +21,6 @@ export const Player: React.FC = () => {
 	const playerBar = useRef(null);
 	if (location.pathname === "/auth") return null;
 	const { song } = useSong(player.songId);
-	console.log(player.songId, "song balls");
 	const { song: queueSong } =
 		player.queueType === "song" ? useSong(player.queueId) : { song: null };
 	const { playlist: queuePlaylist } =
@@ -30,8 +30,7 @@ export const Player: React.FC = () => {
 
 	// this is to be removed
 	useEffect(() => {
-		player.setQueueId(489, "song");
-		console.log("how");
+		player.setQueueId(1, "song");
 	}, [player]);
 
 	useEffect(() => {
@@ -45,7 +44,6 @@ export const Player: React.FC = () => {
 	}, [song, player.position]);
 	const [playingFrom, setPlayingFrom] = useState<ReactNode>();
 	useEffect(() => {
-		console.log(player.queueId);
 		if (!player.queueId) return;
 		let cutOff: string;
 		switch (player.queueType) {
@@ -83,7 +81,7 @@ export const Player: React.FC = () => {
 				<img
 					src={`${import.meta.env.VITE_API_URL}/songs/${song?.id}/cover`}
 					alt="Song cover"
-				/>
+				/>g
 				<div>
 					<h3>{song?.title}</h3>
 					<p className={Style.artist}> {song?.artist?.name}</p>

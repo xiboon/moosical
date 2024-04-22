@@ -1,37 +1,13 @@
 {
-<<<<<<< HEAD
-	"$schema": "https://biomejs.dev/schemas/1.4.1/schema.json",
-	"organizeImports": {
-		"enabled": true
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"performance": {
-				"recommended": true
-			},
-			"complexity": {
-				"recommended": true,
-				"noForEach": "off"
-			},
-			"style": {
-				"recommended": true
-			},
-			"suspicious": {
-				"recommended": true
-			},
-			"nursery": {
-				"noUnusedImports": "error",
-				"noDuplicateJsonKeys": "error",
-				"noUselessLoneBlockStatements": "error"
-			}
-		}
-	}
-=======
-    "$schema": "https://biomejs.dev/schemas/1.4.1/schema.json",
+    "$schema": "https://biomejs.dev/schemas/1.7.1/schema.json",
     "organizeImports": {
         "enabled": true
+    },
+    "files": {
+        "include": [
+            "src/**/*.ts",
+            "src/**/*.tsx"
+        ]
     },
     "linter": {
         "enabled": true,
@@ -39,6 +15,7 @@
             "recommended": true,
             "correctness": {
                 "recommended": true,
+                "noUnusedImports": "error",
                 "noSwitchDeclarations": "off"
             },
             "performance": {
@@ -55,11 +32,8 @@
                 "recommended": true
             },
             "nursery": {
-                "noUnusedImports": "error",
-                "noDuplicateJsonKeys": "error",
-                "noUselessLoneBlockStatements": "error"
+                "noDuplicateJsonKeys": "error"
             }
         }
     }
->>>>>>> 90180a4 (refactor: move to monorepo and add frontend)
 }

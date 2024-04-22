@@ -1,6 +1,6 @@
-import { FastifyRequest, FastifyReply } from "fastify";
 import bcrypt from "bcrypt";
-import { Permissions, permissions } from "../../../util/permissions.js";
+import type { FastifyReply, FastifyRequest } from "fastify";
+import { type Permissions, permissions } from "../../../util/permissions.js";
 export const routes = {
 	patch: {
 		handler: async (
@@ -15,13 +15,13 @@ export const routes = {
 			});
 			const manageUsers = requestUser?.permissions.includes("MANAGE_USERS");
 
-			if (req.userId !== parseInt(req.params.id) && !manageUsers) {
+			if (req.userId !== Number.parseInt(req.params.id) && !manageUsers) {
 				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
 
 			const user = await req.db.user.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: { id: Number.parseInt(req.params.id) },
 			});
 
 			if (!user) {

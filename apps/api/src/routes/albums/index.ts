@@ -1,4 +1,4 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export const routes = {
 	get: {
@@ -6,7 +6,7 @@ export const routes = {
 			req: FastifyRequest<{ Querystring: { search: string; limit?: string } }>,
 			res: FastifyReply,
 		) => {
-			const limit = parseInt(req.query.limit) || 25;
+			const limit = Number.parseInt(req.query.limit) || 25;
 			const search = req.query.search;
 			if (search.length > 50) {
 				res.code(400).send({ error: "Search string too long" });

@@ -1,13 +1,13 @@
-import { PrismaClient } from "@prisma/client";
-import { Path, glob } from "glob";
-import { parseBuffer, parseFile } from "music-metadata";
-import { SongManager } from "./SongManager";
-import crypto from "crypto";
-import { appendFile, readFile, rename, writeFile } from "fs/promises";
-import { existsSync } from "fs";
-import sharp from "sharp";
+import crypto from "node:crypto";
+import { existsSync } from "node:fs";
+import { appendFile, readFile, rename, writeFile } from "node:fs/promises";
+import type { PrismaClient } from "@prisma/client";
+import { type Path, glob } from "glob";
 import mime from "mime";
+import { parseBuffer, parseFile } from "music-metadata";
+import sharp from "sharp";
 import { env } from "../util/env.js";
+import type { SongManager } from "./SongManager";
 
 export class SongIndexer {
 	finishedAlbums: string[] = [];

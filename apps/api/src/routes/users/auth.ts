@@ -1,6 +1,6 @@
-import { FastifyReply, FastifyRequest } from "fastify";
 import bcrypt from "bcrypt";
 import { createSigner } from "fast-jwt";
+import type { FastifyReply, FastifyRequest } from "fastify";
 export const routes = {
 	post: {
 		handler: async (

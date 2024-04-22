@@ -1,8 +1,7 @@
-import "dotenv/config";
-import { readFile, writeFile } from "fs/promises";
-import { createEnv } from "neon-env";
 import crypto from "node:crypto";
-import { join } from "path";
+import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { createEnv } from "neon-env";
 
 const mainDir = import.meta.url
 	.replace("file://", "")

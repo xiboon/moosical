@@ -1,10 +1,8 @@
-import { PrismaClient } from "@prisma/client";
-import { SongManager } from "./classes/SongManager";
-import { LyricsProvider } from "./classes/LyricsProvider";
-import { SongIndexer } from "./classes/SongIndexer";
-// biome-ignore lint/nursery/noUnusedImports: this is needed for the type augmentation to work properly
-import { FastifyRequest, FastifyReply } from "fastify";
-import { Transformers } from "./classes/Transformers";
+import type { PrismaClient } from "@prisma/client";
+import type { LyricsProvider } from "./classes/LyricsProvider";
+import type { SongIndexer } from "./classes/SongIndexer";
+import type { SongManager } from "./classes/SongManager";
+import type { Transformers } from "./classes/Transformers";
 declare module "fastify" {
 	interface FastifyRequest extends FastifyRequest {
 		db: PrismaClient;

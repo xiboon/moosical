@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { User } from "../types/User";
+import type { User } from "../types/User";
 
 export function useUser(id: number | "me") {
 	const { data, error, isLoading } = useSWR(`/users/${id}`);

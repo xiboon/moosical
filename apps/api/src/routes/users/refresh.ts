@@ -1,5 +1,5 @@
-import { FastifyReply, FastifyRequest } from "fastify";
 import { createSigner } from "fast-jwt";
+import type { FastifyReply, FastifyRequest } from "fastify";
 export const routes = {
 	post: {
 		handler: async (

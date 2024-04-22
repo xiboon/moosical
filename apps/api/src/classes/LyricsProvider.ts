@@ -1,7 +1,7 @@
-import { existsSync } from "fs";
 import crypto from "node:crypto";
-import { join } from "path";
-import { readFile, writeFile } from "fs/promises";
+import { existsSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import Genius from "genius-lyrics";
 import { env } from "../util/env.js";
 export class LyricsProvider {
@@ -37,7 +37,7 @@ export class LyricsProvider {
 			const song = featuredArtists
 				? search.filter((s) =>
 						featuredArtists.includes(s.artist.name.split("&")[0].trim()),
-				  )[0]
+					)[0]
 				: search[0];
 
 			lyrics = await song?.lyrics();
@@ -60,7 +60,7 @@ export class LyricsProvider {
 			? {
 					source,
 					lyrics,
-			  }
+				}
 			: undefined;
 	}
 }

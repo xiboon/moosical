@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { Song } from "../types/Song";
+import type { Song } from "../types/Song";
 
 export function useSong(id: number) {
 	const { data, error, isLoading } = useSWR(`/songs/${id}`);

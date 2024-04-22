@@ -1,5 +1,5 @@
 import { distance } from "fastest-levenshtein";
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export const routes = {
 	get: {
@@ -8,7 +8,7 @@ export const routes = {
 			res: FastifyReply,
 		) => {
 			const search = req.query.search;
-			const limit = parseInt(req.query.limit) || 25;
+			const limit = Number.parseInt(req.query.limit) || 25;
 			if (Number.isNaN(limit)) {
 				res.code(400).send({ error: "Limit must be a number" });
 				return;

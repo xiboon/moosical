@@ -1,8 +1,8 @@
-import crypto from 'node:crypto';
-import { writeFile } from 'node:fs/promises';
+import crypto from "node:crypto";
+import { writeFile } from "node:fs/promises";
 import { DiscogsClient } from "@lionralfs/discogs-client";
-import { PrismaClient } from "@prisma/client";
-import { env } from '../util/env';
+import type { PrismaClient } from "@prisma/client";
+import { env } from "../util/env";
 export interface SongData {
 	title: string;
 	artist: string;
@@ -23,12 +23,11 @@ export class SongManager {
 		const artist = await this.db.artist.findMany({
 			where: { name },
 		});
-		const hash = crypto
-				.createHash("sha1")
-				.update('name')
-				.digest("hex");
+		if (cover) {
+			const hash = crypto.createHash("sha1").update("name").digest("hex");
 			const coverPath = `${env.IMAGE_PATH}/artist_${hash}.jpg`;
 			await writeFile(coverPath, cover);
+		}
 		if (artist.length > 0) {
 			return artist[0].id;
 		}

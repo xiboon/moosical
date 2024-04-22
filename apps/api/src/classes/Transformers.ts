@@ -1,4 +1,10 @@
-import { Album, Artist, Playlist, PrismaClient, Song } from "@prisma/client";
+import type {
+	Album,
+	Artist,
+	Playlist,
+	PrismaClient,
+	Song,
+} from "@prisma/client";
 
 export class Transformers {
 	constructor(private db: PrismaClient) {}
@@ -14,11 +20,11 @@ export class Transformers {
 							in: song.featuredArtistsIds,
 						},
 					},
-			  });
+				});
 		const album = includeAlbum
 			? await this.db.album.findUnique({
 					where: { id: song.albumId },
-			  })
+				})
 			: null;
 
 		return {
@@ -41,7 +47,7 @@ export class Transformers {
 							where: { albumId: album.id },
 						})
 					).map((e) => this.transformSong(e, false)),
-			  )
+				)
 			: [];
 		return {
 			id: album.id,
@@ -62,7 +68,7 @@ export class Transformers {
 							where: { artistId: artist.id },
 						})
 					).map((e) => this.transformAlbum(e)),
-			  )
+				)
 			: [];
 		const songs = includeSongs
 			? await Promise.all(
@@ -71,7 +77,7 @@ export class Transformers {
 							where: { artistId: artist.id },
 						})
 					).map((e) => this.transformSong(e)),
-			  )
+				)
 			: [];
 		return {
 			id: artist.id,

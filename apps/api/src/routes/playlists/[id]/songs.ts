@@ -1,4 +1,4 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 // add other sorting - by artist, album, song name, time added
 export const routes = {
 	get: {
@@ -33,7 +33,7 @@ export const routes = {
 			if (sortDirection !== "asc" && sortDirection !== "desc")
 				return res.code(400).send({ error: "Invalid sort direction" });
 
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			const playlist = await req.db.playlist.findUnique({
 				where: { id },
 				select: {
@@ -57,13 +57,13 @@ export const routes = {
 				orderBy: sort === "timeAdded" ? { position: "asc" } : undefined,
 			});
 
-			const limit = parseInt(req.query?.limit) || 50;
+			const limit = Number.parseInt(req.query?.limit) || 50;
 			if (limit > 100) {
 				res.code(400).send({ error: "Limit too high" });
 				return;
 			}
 
-			const offset = parseInt(req.query.offset) || 0;
+			const offset = Number.parseInt(req.query.offset) || 0;
 			const songIds = songs
 				.sort((a, b) => a.position - b.position)
 				.slice(offset, offset + limit);
@@ -104,7 +104,7 @@ export const routes = {
 			}>,
 			res: FastifyReply,
 		) => {
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			if (!id || Number.isNaN(id)) {
 				res.code(400).send({ error: "Invalid id" });
 				return;
@@ -117,7 +117,7 @@ export const routes = {
 				return;
 			}
 			const playlist = await req.db.playlist.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: { id: Number.parseInt(req.params.id) },
 			});
 
 			if (!playlist) {
@@ -151,13 +151,13 @@ export const routes = {
 			}>,
 			res,
 		) => {
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			if (!id || Number.isNaN(id)) {
 				res.code(400).send({ error: "Invalid id" });
 				return;
 			}
 			const playlist = await req.db.playlist.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: { id: Number.parseInt(req.params.id) },
 			});
 			if (!playlist) {
 				res.code(404).send({ error: "Playlist not found" });

@@ -1,5 +1,5 @@
-import { Song } from "@prisma/client";
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { Song } from "@prisma/client";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export const routes = {
 	get: {
@@ -8,7 +8,7 @@ export const routes = {
 			res: FastifyReply,
 		) => {
 			const song = await req.db.song.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: { id: Number.parseInt(req.params.id) },
 			});
 			const streams = await req.db.stream.findMany({
 				where: {

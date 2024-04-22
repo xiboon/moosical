@@ -1,9 +1,9 @@
-import prism from "prism-media";
-import { FastifyRequest, FastifyReply } from "fastify";
-import { createReadStream, createWriteStream, existsSync } from "fs";
-import { join } from "path";
-import { env } from "../../../util/env.js";
+import { createReadStream, createWriteStream, existsSync } from "node:fs";
+import { join } from "node:path";
 import send from "@fastify/send";
+import type { FastifyReply, FastifyRequest } from "fastify";
+import prism from "prism-media";
+import { env } from "../../../util/env.js";
 // import Ffmpeg from "fluent-ffmpeg";
 // import { Writable } from "stream";
 export const routes = {
@@ -26,7 +26,7 @@ export const routes = {
 					return res.code(400).send({ error: "Invalid quality" });
 
 				const song = await req.db.song.findUnique({
-					where: { id: parseInt(req.params.id) },
+					where: { id: Number.parseInt(req.params.id) },
 				});
 
 				if (!song) return res.code(404).send({ error: "Song not found" });
@@ -36,7 +36,7 @@ export const routes = {
 					? join(
 							env.MUSIC_PATH,
 							`${req.params.id}.transcoded${req.query.quality}.${formatExtension}`,
-					  )
+						)
 					: song.filename;
 				// console.log(req.query, format, transcoding);
 				// console.log(filename, existsSync(filename));
@@ -50,7 +50,7 @@ export const routes = {
 									"ogg",
 									"-b:a",
 									`${req.query.quality}k`,
-							  ]
+								]
 							: ["-c:a", "flac", "-f", "flac"];
 					const ffmpeg = new prism.FFmpeg({ args: argumentList });
 

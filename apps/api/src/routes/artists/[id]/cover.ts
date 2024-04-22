@@ -1,8 +1,8 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
-import { existsSync } from "fs";
-import crypto from "crypto";
-import { readFile, writeFile } from "fs/promises";
+import crypto from "node:crypto";
+import { existsSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
 import { env } from "../../../util/env.js";
 export const routes = {
 	get: {
@@ -14,7 +14,7 @@ export const routes = {
 				res.code(400).send({ error: "No id specified" });
 				return;
 			}
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			if (Number.isNaN(id)) {
 				res.code(400).send({ error: "ID must be a number" });
 				return;

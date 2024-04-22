@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export async function verifyJWT(req: FastifyRequest, _res: FastifyReply, done) {
 	const nonAuthRoutes = ["/users/register", "/users/auth", "/songs/amount"];

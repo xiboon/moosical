@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { useParams } from "react-router-dom";
 import Style from "../styles/Playlist.module.scss";
 import { usePlaylist } from "../utils/usePlaylist";
@@ -6,7 +6,7 @@ export const Playlist: React.FC = () => {
 	const params = useParams();
 	// TODO: make this an error
 	if (!params?.id) return null;
-	const id = parseInt(params?.id);
+	const id = Number.parseInt(params?.id);
 	if (Number.isNaN(id)) return null;
 	const { playlist, isLoading } = usePlaylist(id);
 	if (isLoading) return null;

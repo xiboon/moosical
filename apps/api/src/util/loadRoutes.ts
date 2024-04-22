@@ -1,12 +1,12 @@
-import {
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
+import type {
 	FastifyInstance,
 	FastifyPluginOptions,
 	FastifyReply,
 	FastifyRequest,
 	HTTPMethods,
 } from "fastify";
-import { readdir } from "fs/promises";
-import { join } from "path";
 import { verifyJWT } from "./verifyJWT.js";
 export type Route = "get" | "post" | "put" | "delete" | "patch";
 export type Routes = Record<

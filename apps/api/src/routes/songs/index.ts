@@ -1,6 +1,6 @@
+import { join } from "node:path";
 import { distance } from "fastest-levenshtein";
-import { FastifyRequest, FastifyReply } from "fastify";
-import { join } from "path";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import { env } from "../../util/env.js";
 export const routes = {
 	get: {

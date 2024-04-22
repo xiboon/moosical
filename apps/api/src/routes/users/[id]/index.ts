@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 export const routes = {
 	get: {
 		handler: async (
@@ -7,7 +7,10 @@ export const routes = {
 		) => {
 			const user = await req.db.user.findUnique({
 				where: {
-					id: req.params.id === "me" ? req.userId : parseInt(req.params.id),
+					id:
+						req.params.id === "me"
+							? req.userId
+							: Number.parseInt(req.params.id),
 				},
 			});
 			if (!user) {

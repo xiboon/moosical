@@ -5,17 +5,17 @@
   "description": "Backend API for moosical",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npx prisma generate &&  tsc",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "reset-db": "prisma db push --force-reset && rm -rf covers",
-    "dev": "tsx --watch src/index.ts",
+    "dev": "npx prisma db push && tsx --watch src/index.ts",
     "docker": "prisma db push && npm start"
   },
   "author": "xiboon",
   "license": "MIT",
   "devDependencies": {
-    "@biomejs/biome": "^1.4.1",
+    "@biomejs/biome": "^1.7.1",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.10.2",
     "prisma": "^5.6.0",
@@ -32,7 +32,6 @@
     "@napi-rs/canvas": "^0.1.51",
     "@prisma/client": "^5.6.0",
     "bcrypt": "^5.1.1",
-    "dotenv": "^16.3.1",
     "fast-jwt": "^3.3.2",
     "fastest-levenshtein": "^1.0.16",
     "fastify": "^4.24.3",

@@ -1,11 +1,11 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 export const routes = {
 	get: {
 		handler: async (
 			req: FastifyRequest<{ Params: { id: string } }>,
 			res: FastifyReply,
 		) => {
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			const playlist = await req.db.playlist.findUnique({ where: { id } });
 			if (!playlist) {
 				res.code(404).send({ error: "Playlist not found" });
@@ -24,7 +24,7 @@ export const routes = {
 			req: FastifyRequest<{ Params: { id: string } }>,
 			res: FastifyReply,
 		) => {
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			if (!id || Number.isNaN(id)) {
 				res.code(400).send({ error: "Invalid id" });
 				return;

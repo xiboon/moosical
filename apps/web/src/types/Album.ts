@@ -1,5 +1,5 @@
-import { Artist } from "./Artist";
-import { Song } from "./Song";
+import type { Artist } from "./Artist";
+import type { Song } from "./Song";
 export interface Album {
 	id: number;
 	title: string;

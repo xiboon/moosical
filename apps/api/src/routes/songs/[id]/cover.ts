@@ -1,6 +1,6 @@
-import { FastifyRequest, FastifyReply } from "fastify";
-import { readFile } from "fs/promises";
-import crypto from "crypto";
+import crypto from "node:crypto";
+import { readFile } from "node:fs/promises";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import { env } from "../../../util/env.js";
 
 export const routes = {
@@ -10,7 +10,7 @@ export const routes = {
 			res: FastifyReply,
 		) => {
 			const song = await req.db.song.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: { id: Number.parseInt(req.params.id) },
 			});
 			if (!song) return res.code(404).send({ error: "Song not found" });
 			const artist = await req.db.artist.findUnique({

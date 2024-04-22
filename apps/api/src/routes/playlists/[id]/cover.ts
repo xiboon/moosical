@@ -1,7 +1,7 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
+import { readFile, writeFile } from "node:fs/promises";
 import { Canvas, loadImage } from "@napi-rs/canvas";
-import { FastifyReply, FastifyRequest } from "fastify";
-import { readFile, writeFile } from "fs/promises";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import { env } from "../../../util/env.js";
 
 export const routes = {
@@ -11,7 +11,7 @@ export const routes = {
 			res: FastifyReply,
 		) => {
 			const playlist = await req.db.playlist.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: { id: Number.parseInt(req.params.id) },
 			});
 			if (!playlist) return res.code(404).send({ error: "Playlist not found" });
 			const user = await req.db.user.findUnique({

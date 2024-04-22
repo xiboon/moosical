@@ -1,4 +1,4 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export const routes = {
 	get: {
@@ -32,7 +32,7 @@ export const routes = {
 			if (sortDirection !== "asc" && sortDirection !== "desc")
 				return res.code(400).send({ error: "Invalid sort direction" });
 
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			const playlist = await req.db.playlist.findUnique({
 				where: { id },
 				select: {
@@ -88,7 +88,7 @@ export const routes = {
 			).map((e) => e.id);
 			return res.send(
 				req.query.startFrom
-					? songs.slice(songs.indexOf(parseInt(req.query.startFrom)))
+					? songs.slice(songs.indexOf(Number.parseInt(req.query.startFrom)))
 					: songs,
 			);
 		},

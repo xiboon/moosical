@@ -1,6 +1,6 @@
-import { FastifyRequest, FastifyReply } from "fastify";
-import { readFile, writeFile } from "fs/promises";
-import crypto from "crypto";
+import crypto from "node:crypto";
+import { readFile, writeFile } from "node:fs/promises";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import mime from "mime";
 import { env } from "../../../util/env.js";
 export const routes = {
@@ -24,7 +24,7 @@ export const routes = {
 			}
 
 			const user = await req.db.user.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: { id: Number.parseInt(req.params.id) },
 			});
 			if (!user) return res.code(404).send({ error: "User not found" });
 			const image = await req.file();
@@ -53,7 +53,7 @@ export const routes = {
 			res: FastifyReply,
 		) => {
 			const user = await req.db.user.findUnique({
-				where: { id: parseInt(req.params.id) },
+				where: { id: Number.parseInt(req.params.id) },
 			});
 			if (!user) return res.code(404).send({ error: "User not found" });
 			let file: Buffer;

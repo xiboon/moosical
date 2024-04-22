@@ -1,4 +1,4 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export const routes = {
 	get: {
@@ -6,7 +6,7 @@ export const routes = {
 			req: FastifyRequest<{ Params: { id: string } }>,
 			res: FastifyReply,
 		) => {
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			const artist = await req.db.artist.findUnique({ where: { id } });
 			if (!artist) {
 				res.code(404).send({ error: "Artist not found" });

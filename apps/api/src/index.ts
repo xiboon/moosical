@@ -1,4 +1,5 @@
-import { join } from "path";
+import { mkdir } from "node:fs/promises";
+import { join } from "node:path";
 import fastifyAuth from "@fastify/auth";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
@@ -7,10 +8,9 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { createVerifier } from "fast-jwt";
 import { fastify } from "fastify";
-import { mkdir } from "fs/promises";
 import { env } from "./util/env.js";
 
-import { cpus } from "os";
+import { cpus } from "node:os";
 import sharp from "sharp";
 import { LyricsProvider } from "./classes/LyricsProvider.js";
 import { SongIndexer } from "./classes/SongIndexer.js";
@@ -83,7 +83,7 @@ await db.user.upsert({
 	},
 });
 
-app.listen({ port: parseInt(process.env.PORT) }, () => {
+app.listen({ port: Number.parseInt(process.env.PORT) }, () => {
 	songIndexer.indexSongs();
 	console.log(`Server is running on port ${process.env.PORT}`);
 	console.log("h");

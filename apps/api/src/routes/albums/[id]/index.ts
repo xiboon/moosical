@@ -1,4 +1,4 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 export const routes = {
 	get: {
@@ -10,7 +10,7 @@ export const routes = {
 				res.code(400).send({ error: "No id specified" });
 				return;
 			}
-			const id = parseInt(req.params.id);
+			const id = Number.parseInt(req.params.id);
 			if (Number.isNaN(id)) {
 				res.code(400).send({ error: "ID must be a number" });
 				return;

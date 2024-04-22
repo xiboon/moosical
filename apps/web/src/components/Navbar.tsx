@@ -75,7 +75,7 @@ export const Navbar: React.FC = () => {
 											<p>{playlist.title}</p>
 										</Link>
 									);
-							  })}
+								})}
 					</div>
 				</div>
 			</div>
