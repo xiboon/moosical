@@ -71,7 +71,6 @@ export const env = createEnv({
 } as const);
 
 if (generatedJwt || env.JWT_SECRET === secret) {
-	console.log(env.JWT_SECRET);
 	console.log(
 		"Generating new JWT secret because it was not set or was too short.",
 	);
