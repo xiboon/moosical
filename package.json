@@ -4,6 +4,7 @@
   "scripts": {
     "build": "dotenv -- turbo build",
     "dev": "dotenv -- turbo dev",
+    "reset-db": "dotenv -- turbo reset-db",
     "lint": "turbo lint"
   },
   "devDependencies": {

@@ -49,7 +49,6 @@ app.register(cors, {
 	credentials: true,
 });
 app.register(routesPlugin, { path: join(mainDir, "routes") });
-
 const verifier = createVerifier({
 	key: env.JWT_SECRET,
 	algorithms: ["HS256"],

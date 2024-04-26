@@ -8,7 +8,7 @@ export const SongList: React.FC<{ playlist: boolean }> = ({ playlist }) => {
 				<p>Title</p>
 				<p>Artist</p>
 				<p>Album</p>
-				{playlist ? <p>Duration</p> : null}
+				{playlist ? <p>Time added</p> : null}
 				<p>Duration</p>
 			</div>
 		</div>

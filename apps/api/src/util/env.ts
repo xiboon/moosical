@@ -25,21 +25,25 @@ export const env = createEnv({
 		type: "string",
 		optional: false,
 		parser(input) {
-			return input.startsWith("/") ? input : join(`${mainDir}/../../`, input);
+			return input.startsWith("/") ? input : join(`${mainDir}/..`, input);
 		},
+	},
+	ROOT_PASSWORD: {
+		type: "string",
+		default: "root",
 	},
 	IMAGE_PATH: {
 		type: "string",
 		optional: false,
 		parser(input) {
-			return input.startsWith("/") ? input : join(`${mainDir}/../..`, input);
+			return input.startsWith("/") ? input : join(`${mainDir}/..`, input);
 		},
 	},
 	LYRICS_PATH: {
 		type: "string",
 		optional: false,
 		parser(input) {
-			return input.startsWith("/") ? input : join(`${mainDir}/../..`, input);
+			return input.startsWith("/") ? input : join(`${mainDir}/..`, input);
 		},
 	},
 	GENIUS_TOKEN: {
@@ -62,6 +66,7 @@ export const env = createEnv({
 				generatedJwt = true;
 				return secret;
 			}
+			return input;
 		},
 	},
 	SAVE_TRANSCODED: {
@@ -74,10 +79,18 @@ if (generatedJwt || env.JWT_SECRET === secret) {
 	console.log(
 		"Generating new JWT secret because it was not set or was too short.",
 	);
-	let envFile = await readFile(join(mainDir, "..", ".env"), "utf-8");
-	envFile =
-		envFile.match(/[#]*^JWT_SECRET=.*/) === null
-			? `${envFile}\nJWT_SECRET="${env.JWT_SECRET}"`
-			: envFile.replace(/[#]*^JWT_SECRET=.*/, `JWT_SECRET="${env.JWT_SECRET}"`);
-	await writeFile(join(mainDir, "..", ".env"), envFile);
+	const envFile = await readFile(join(mainDir, "..", ".env"), "utf-8");
+	const data = envFile.split("\n").map((e) => {
+		if (e.trim().startsWith("#")) return e;
+		const [key, value] = e.split("=");
+		if (!key || !value) return e;
+		if (key === "JWT_SECRET") {
+			return `${key}="${secret}"`;
+		}
+	});
+	// envFile =
+	// 	envFile.match(/[#]*^JWT_SECRET=.*/) === null
+	// 		? `${envFile}\nJWT_SECRET="${env.JWT_SECRET}"`
+	// 		: envFile.replace(/[#]*^JWT_SECRET=.*/, `JWT_SECRET="${env.JWT_SECRET}"`);
+	await writeFile(join(mainDir, "..", ".env"), data.join("\n"));
 }

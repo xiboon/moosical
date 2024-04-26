@@ -81,7 +81,7 @@ export const Player: React.FC = () => {
 				<img
 					src={`${import.meta.env.VITE_API_URL}/songs/${song?.id}/cover`}
 					alt="Song cover"
-				/>g
+				/>
 				<div>
 					<h3>{song?.title}</h3>
 					<p className={Style.artist}> {song?.artist?.name}</p>
