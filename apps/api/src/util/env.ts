@@ -1,3 +1,4 @@
+import { error } from "node:console";
 import crypto from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -79,15 +80,20 @@ if (generatedJwt || env.JWT_SECRET === secret) {
 	console.log(
 		"Generating new JWT secret because it was not set or was too short.",
 	);
+	let replaced = false;
 	const envFile = await readFile(join(mainDir, "..", ".env"), "utf-8");
 	const data = envFile.split("\n").map((e) => {
+		if (replaced) return e;
 		if (e.trim().startsWith("#")) return e;
 		const [key, value] = e.split("=");
 		if (!key || !value) return e;
 		if (key === "JWT_SECRET") {
+			replaced = true;
 			return `${key}="${secret}"`;
 		}
+		return e;
 	});
+	if (!replaced) data.push(`JWT_SECRET="${secret}"`);
 	// envFile =
 	// 	envFile.match(/[#]*^JWT_SECRET=.*/) === null
 	// 		? `${envFile}\nJWT_SECRET="${env.JWT_SECRET}"`
