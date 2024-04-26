@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { createSigner } from "fast-jwt";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { env } from "../../util/env";
 export const routes = {
 	post: {
 		handler: async (
@@ -14,7 +15,7 @@ export const routes = {
 			const exists = await req.db.user.findUnique({
 				where: { name },
 			});
-			if (process.env.ENABLE_REGISTERING?.toLowerCase() !== "true") {
+			if (!env.ENABLE_REGISTERING) {
 				const cookies = req.cookies;
 				if (!cookies || !cookies.token) {
 					res.status(403);
@@ -60,7 +61,7 @@ export const routes = {
 			if (!jwt)
 				res.setCookie(
 					"token",
-					createSigner({ algorithm: "HS256", key: process.env.JWT_SECRET })({
+					createSigner({ algorithm: "HS256", key: env.JWT_SECRET })({
 						id: user.id,
 					}),
 					{

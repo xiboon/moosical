@@ -15,7 +15,7 @@ export interface SongData {
 }
 export class SongManager {
 	discogs = new DiscogsClient({
-		auth: { userToken: process.env.DISCOGS_TOKEN },
+		auth: { userToken: env.DISCOGS_TOKEN },
 	}).database();
 	constructor(private db: PrismaClient) {}
 

@@ -1,4 +1,3 @@
-import { error } from "node:console";
 import crypto from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -17,6 +16,9 @@ export const env = createEnv({
 	PORT: {
 		type: "number",
 		default: 3000,
+	},
+	CORS_ORIGIN: {
+		type: "string",
 	},
 	DATABASE_URL: {
 		type: "string",

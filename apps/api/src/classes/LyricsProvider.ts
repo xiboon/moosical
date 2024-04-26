@@ -9,7 +9,7 @@ export class LyricsProvider {
 	lyricPath: string;
 	constructor() {
 		this.lyricPath = env.LYRICS_PATH;
-		this.genius = new Genius.Client(process.env.GENIUS_TOKEN);
+		this.genius = new Genius.Client(env.GENIUS_TOKEN);
 	}
 	async findLyrics(artist: string, title: string, featuredArtists?: string[]) {
 		const hash = crypto
@@ -28,7 +28,7 @@ export class LyricsProvider {
 			`https://lrclib.net/api/search?track_name=${title}&artist_name=${artist}`,
 		).then((res) => res.json());
 
-		if (lyrics?.length === 0 && process.env.GENIUS_TOKEN) {
+		if (lyrics?.length === 0 && env.GENIUS_TOKEN) {
 			const geniusTitle = title.replaceAll("(", "").replaceAll(")", "");
 			const search = await this.genius.songs.search(
 				`${geniusTitle} ${featuredArtists ? "" : artist}`,

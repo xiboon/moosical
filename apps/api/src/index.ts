@@ -31,11 +31,7 @@ await mkdir(env.LYRICS_PATH).catch(() => {});
 const app = fastify();
 const db = new PrismaClient();
 const songManager = new SongManager(db);
-const songIndexer = new SongIndexer(
-	db,
-	songManager,
-	process.env.MUSIC_PATH.split(";"),
-);
+const songIndexer = new SongIndexer(db, songManager, env.MUSIC_PATH);
 const transformers = new Transformers(db);
 const lyricsProvider = new LyricsProvider();
 
@@ -45,7 +41,7 @@ app.register(fastifyMultipart, {
 	limits: { fileSize: 1024 * 1024 * 1024 * 100, files: 1, fields: 0 },
 });
 app.register(cors, {
-	origin: process.env.CORS_ORIGIN,
+	origin: env.CORS_ORIGIN,
 	credentials: true,
 });
 app.register(routesPlugin, { path: join(mainDir, "routes") });
@@ -78,12 +74,12 @@ await db.user.upsert({
 	create: {
 		name: "root",
 		permissions: permissions,
-		password: await bcrypt.hash(process.env.ROOT_PASSWORD || "root", 12),
+		password: await bcrypt.hash(env.ROOT_PASSWORD || "root", 12),
 	},
 });
 
-app.listen({ port: Number.parseInt(process.env.PORT) }, () => {
+app.listen({ port: env.PORT }, () => {
 	songIndexer.indexSongs();
-	console.log(`Server is running on port ${process.env.PORT}`);
+	console.log(`Server is running on port ${env.PORT}`);
 	console.log("h");
 });

@@ -16,7 +16,7 @@ export class SongIndexer {
 	constructor(
 		private db: PrismaClient,
 		private manager: SongManager,
-		private songPaths: string[],
+		private songPath: string,
 	) {
 		this.coverPath = env.IMAGE_PATH;
 		this.lyricPath = env.LYRICS_PATH;
@@ -24,7 +24,7 @@ export class SongIndexer {
 
 	async indexSongs() {
 		console.log("Starting indexing");
-		const songPaths = await glob(`${this.songPaths[0]}/**/*`, {
+		const songPaths = await glob(`${this.songPath}/**/*`, {
 			withFileTypes: true,
 		});
 		const promise = songPaths.map(async (e) => {

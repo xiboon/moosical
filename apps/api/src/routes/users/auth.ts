@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { createSigner } from "fast-jwt";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { env } from "../../util/env";
 export const routes = {
 	post: {
 		handler: async (
@@ -27,7 +28,7 @@ export const routes = {
 				return;
 			}
 			const token = createSigner({
-				key: process.env.JWT_SECRET,
+				key: env.JWT_SECRET,
 			})({ userId: user.id });
 			res.setCookie("token", token, {
 				httpOnly: true,

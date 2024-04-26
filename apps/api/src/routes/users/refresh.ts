@@ -1,5 +1,6 @@
 import { createSigner } from "fast-jwt";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { env } from "../../util/env";
 export const routes = {
 	post: {
 		handler: async (
@@ -18,7 +19,7 @@ export const routes = {
 				return;
 			}
 			const token = createSigner({
-				key: process.env.JWT_SECRET,
+				key: env.JWT_SECRET,
 				expiresIn: "7d",
 			})({ userId: user });
 
