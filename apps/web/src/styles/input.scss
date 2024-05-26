@@ -1,3 +1,4 @@
+/* stylelint-disable selector-class-pattern */
 input[type="text"],
 input[type="password"] {
     font-family: 'Be Vietnam Pro';
@@ -11,6 +12,28 @@ input[type="password"] {
 }
 
 
+.select-container {
+    // height: 5vh;
+    width: 8vw;
+    display: block !important;
+
+    .select__control {
+        background-color: rgba(0, 0, 0, 30%);
+        border: 0;
+    }
+
+    .select__value-container {
+        display: flex;
+        align-items: center;
+
+        // justify-content: center;
+    }
+
+    .select__single-value {
+        color: white;
+        font-family: 'Be Vietnam Pro';
+    }
+}
 
 .rc-slider {
     width: 8vw;
@@ -21,7 +44,7 @@ input[type="password"] {
     touch-action: none;
     cursor: pointer;
     box-sizing: border-box;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0%);
 }
 
 .rc-slider:hover {
@@ -49,7 +72,6 @@ input[type="password"] {
     position: absolute;
     background-color: var(--color-primary) !important;
     height: 4px;
-    background-color: #abe2fb;
     border-radius: 6px;
 }
 
@@ -57,8 +79,8 @@ input[type="password"] {
     z-index: 1;
     box-sizing: content-box;
     background-clip: content-box;
-    border-top: 5px solid rgba(0, 0, 0, 0);
-    border-bottom: 5px solid rgba(0, 0, 0, 0);
+    border-top: 5px solid rgba(0, 0, 0, 0%);
+    border-bottom: 5px solid rgba(0, 0, 0, 0%);
     transform: translateY(-5px);
 }
 

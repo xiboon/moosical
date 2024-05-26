@@ -1,10 +1,11 @@
 import type React from "react";
 import { useParams } from "react-router-dom";
+import { SongList } from "../components/SongList";
 import Style from "../styles/Playlist.module.scss";
 import { usePlaylist } from "../utils/usePlaylist";
 export const Playlist: React.FC = () => {
 	const params = useParams();
-	// TODO: make this an error
+	// TODO: make this an error instead of returning nothing
 	if (!params?.id) return null;
 	const id = Number.parseInt(params?.id);
 	if (Number.isNaN(id)) return null;
@@ -25,6 +26,7 @@ export const Playlist: React.FC = () => {
 						<p>{playlist.description || "No description."}</p>
 					</div>
 				</div>
+				<SongList playlistId={id} />
 			</div>
 		</div>
 	);

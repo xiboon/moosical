@@ -13,9 +13,12 @@ a work in progress self-hosted music streaming service
 - [ ] better logging
 - [ ] prometheus statistics (+ grafana)
 - [ ] admin panel routes
-- [ ] make importing more accurate
+- [ ] make importing playlists more accurate
 - [ ] improve search using [minisearch](https://www.npmjs.com/package/minisearch)
 - [ ] generate random root password if not in env
 - [x] user system
 - [x] uploading songs
 - [x] permissions systems   
+- [ ] improve types in both the frontend and backend
+- [ ] volume normalization
+- [ ] improve validation in the backend using [zod](https://npmjs.com/package/zod)

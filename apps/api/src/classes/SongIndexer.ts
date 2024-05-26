@@ -41,34 +41,35 @@ export class SongIndexer {
 			}
 		});
 	}
-
+	// make the two functions below do the same exact thing
 	async parseSongFromData(data: Buffer, filename?: string) {
 		const metadata = await parseBuffer(data);
+		const artists = metadata.common.artist.split(', ');
 		if (metadata.common.picture) {
 			const cover = metadata.common.picture[0];
 			const data = await sharp(cover.data).resize(512, 512).webp().toBuffer();
 			const hash = crypto
 				.createHash("sha1")
-				.update(metadata.common.artist + metadata.common.title)
+				.update(artists[0] + metadata.common.title)
 				.digest("hex");
 			const coverPath = `${this.coverPath}/${hash}.webp`;
 			await appendFile(coverPath, data);
 		}
 		writeFile(
 			filename ||
-				`${metadata.common.title} - ${metadata.common.artist}.${metadata.format.container}`,
+			`${metadata.common.title} - ${metadata.common.artist}.${metadata.format.container}`,
 			data,
 		);
 		return this.manager.addSongToDB({
 			title: metadata.common.title,
-			artist: metadata.common.artists[0],
-			featuredArtists: metadata.common.artists.slice(1),
+			artist: artists[0],
+			featuredArtists: artists.slice(1),
 			album: metadata.common.album,
 			position: metadata.common.track.no,
 			duration: metadata.format.duration,
 			filename:
 				filename ||
-				`${metadata.common.title} - ${metadata.common.artist}.${metadata.format.container}`,
+				`${metadata.common.title} - ${artists[0]}.${metadata.format.container}`,
 		});
 	}
 
@@ -92,12 +93,13 @@ export class SongIndexer {
 
 		try {
 			const metadata = await parseFile(path.fullpath());
+			const artists = metadata.common.artist.split(', ');
 			if (
 				!metadata.common.title ||
 				!metadata.common.artist ||
 				!metadata.common.album ||
 				!metadata.format.duration ||
-				!metadata.common.artists[0]
+				!artists[0]
 			) {
 				console.log("Invalid file metadata:", path.fullpath());
 				return;
@@ -105,7 +107,7 @@ export class SongIndexer {
 
 			const hash = crypto
 				.createHash("sha1")
-				.update(metadata.common.artist + metadata.common.title)
+				.update(artists[0] + metadata.common.title)
 				.digest("hex");
 
 			if (metadata.common.picture) {
@@ -129,8 +131,8 @@ export class SongIndexer {
 
 			return this.manager.addSongToDB({
 				title: metadata.common.title,
-				artist: metadata.common.artist || metadata.common.artists[0],
-				featuredArtists: metadata.common.artists.slice(1),
+				artist: artists[0],
+				featuredArtists: artists.slice(1),
 				album: metadata.common.album,
 				duration: metadata.format.duration,
 				position: metadata.common.track.no,

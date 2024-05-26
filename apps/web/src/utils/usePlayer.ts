@@ -15,16 +15,18 @@ export function usePlayer() {
 	const [songId, setSongIdState] = useState(0);
 	const [volume, setVolumeState] = useState(audioElement.volume);
 	const [format, setFormat] = useState("original");
+	const [quality, setQuality] = useState<number>();
 	const [isPlaying, setIsPlaying] = useState(!audioElement.paused);
 	const [muted, setMuted] = useState(audioElement.muted);
 	const [queueId, setQueueIdState] = useState(0);
 
-	let sortBy: "artistName" | "title" | "albumTitle" | "timeAdded" | "duration" =
-		"timeAdded";
-	let sortDirection: "asc" | "desc";
+	const [sortBy, setSortBy] = useState<
+		"artistName" | "title" | "albumTitle" | "timeAdded" | "duration"
+	>("timeAdded");
+	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
 	let queueOffset = 0;
-	let interval: number;
+	
 	function back() {
 		setQueue([songId, ...queue]);
 		if (position > 5) return setPosition(0);
@@ -43,11 +45,10 @@ export function usePlayer() {
 
 	function setSongId(id: number) {
 		setSongIdState(id);
+		console.log(quality, Number.isNaN(quality));
 		audioElement.src = `${
 			import.meta.env.VITE_API_URL
-		}/songs/${id}/data?format=${format}`;
-		// audioElement.src =
-		// "http://localhost:8080/Kendrick%20Lamar/[E]%20%20Mr.%20Morale%20&%20The%20Big%20Steppers%20[230890860]%20[2022]/CD2/01%20-%20Kendrick%20Lamar%20-%20Count%20Me%20Out(Explicit).flac";
+		}/songs/${id}/data?format=${format}${quality === undefined ? "" : `&quality=${quality}`}`;
 	}
 
 	function play() {
@@ -93,16 +94,6 @@ export function usePlayer() {
 		audioElement.muted = !audioElement.muted;
 	}
 
-	function setSortBy(
-		type: "artistName" | "title" | "albumTitle" | "timeAdded" | "duration",
-	) {
-		sortBy = type;
-	}
-
-	function setSortDirection(direction: "asc" | "desc") {
-		sortDirection = direction;
-	}
-
 	function setQueueId(
 		id: number,
 		type: "playlist" | "song" | "album",
@@ -118,14 +109,10 @@ export function usePlayer() {
 	}
 	audioElement.onplay = () => {
 		setIsPlaying(true);
-		interval = setInterval(() => {
-			setPositionState(audioElement.currentTime);
-		}, 500);
 	};
 
 	audioElement.onpause = () => {
 		setIsPlaying(false);
-		clearInterval(interval);
 	};
 	audioElement.onerror = (e, v) => {
 		console.log("error,", e, v);
@@ -133,7 +120,10 @@ export function usePlayer() {
 	audioElement.onended = async () => {
 		next();
 	};
-
+	audioElement.ontimeupdate = () => {
+		setPositionState(audioElement.currentTime);
+	
+	}
 	function fetchQueue(id?: number, append = false) {
 		if (!queueId) setQueueId(id || songId, "song", false, false, false);
 		if (queue.length === 0) {
@@ -196,6 +186,8 @@ export function usePlayer() {
 		setPosition,
 		setRepeat,
 		setSongId,
+		setQuality,
+		quality,
 		shuffle,
 		setQueueOffset,
 		setSortBy,

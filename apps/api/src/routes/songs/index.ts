@@ -10,11 +10,11 @@ export const routes = {
 		) => {
 			const search = req.query.search;
 			const limit = req.query.limit || 50;
-			if (search.length > 100) {
+			if (search && search.length > 100) {
 				res.code(400).send({ error: "Search string too long" });
 				return;
 			}
-			if (limit > 100) {
+			if (limit && limit > 100) {
 				res.code(400).send({ error: "Limit too high" });
 				return;
 			}

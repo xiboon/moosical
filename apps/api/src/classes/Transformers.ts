@@ -7,24 +7,24 @@ import type {
 } from "@prisma/client";
 
 export class Transformers {
-	constructor(private db: PrismaClient) {}
-	async transformSong(song: Song, includeAlbum = true) {
+	constructor(private db: PrismaClient) { }
+	async transformSong(song: Song, includeAlbum = true): Promise<Song> {
 		const artist = await this.db.artist.findUnique({
 			where: { id: song.artistId },
 		});
 		const featuredArtists = Number.isNaN(song.featuredArtistsIds?.length)
 			? []
 			: await this.db.artist.findMany({
-					where: {
-						id: {
-							in: song.featuredArtistsIds,
-						},
+				where: {
+					id: {
+						in: song.featuredArtistsIds,
 					},
-				});
+				},
+			});
 		const album = includeAlbum
 			? await this.db.album.findUnique({
-					where: { id: song.albumId },
-				})
+				where: { id: song.albumId },
+			})
 			: null;
 
 		return {
@@ -42,12 +42,12 @@ export class Transformers {
 		});
 		const songs = includeSongs
 			? await Promise.all(
-					(
-						await this.db.song.findMany({
-							where: { albumId: album.id },
-						})
-					).map((e) => this.transformSong(e, false)),
-				)
+				(
+					await this.db.song.findMany({
+						where: { albumId: album.id },
+					})
+				).map((e) => this.transformSong(e, false)),
+			)
 			: [];
 		return {
 			id: album.id,
@@ -63,21 +63,21 @@ export class Transformers {
 	) {
 		const albums = includeAlbums
 			? await Promise.all(
-					(
-						await this.db.album.findMany({
-							where: { artistId: artist.id },
-						})
-					).map((e) => this.transformAlbum(e)),
-				)
+				(
+					await this.db.album.findMany({
+						where: { artistId: artist.id },
+					})
+				).map((e) => this.transformAlbum(e)),
+			)
 			: [];
 		const songs = includeSongs
 			? await Promise.all(
-					(
-						await this.db.song.findMany({
-							where: { artistId: artist.id },
-						})
-					).map((e) => this.transformSong(e)),
-				)
+				(
+					await this.db.song.findMany({
+						where: { artistId: artist.id },
+					})
+				).map((e) => this.transformSong(e)),
+			)
 			: [];
 		return {
 			id: artist.id,

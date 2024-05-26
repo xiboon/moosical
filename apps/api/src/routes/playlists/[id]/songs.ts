@@ -1,37 +1,14 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-// add other sorting - by artist, album, song name, time added
+// TODO: remove pagination actually cause it doesn't really matter? 
+
 export const routes = {
 	get: {
 		handler: async (
 			req: FastifyRequest<{
 				Params: { id: string };
-
-				Querystring: {
-					limit: string;
-					offset: string;
-					sort:
-						| "artistName"
-						| "title"
-						| "albumTitle"
-						| "timeAdded"
-						| "duration";
-					sortDirection: "asc" | "desc";
-				};
 			}>,
 			res: FastifyReply,
 		) => {
-			if (
-				req.query.sort &&
-				!["artistName", "title", "albumTitle", "timeAdded"].includes(
-					req.query.sort,
-				)
-			) {
-				res.code(400).send({ error: "Invalid sort type" });
-			}
-			const sort = req.query.sort || "timeAdded";
-			const sortDirection = req.query.sortDirection || "asc";
-			if (sortDirection !== "asc" && sortDirection !== "desc")
-				return res.code(400).send({ error: "Invalid sort direction" });
 
 			const id = Number.parseInt(req.params.id);
 			const playlist = await req.db.playlist.findUnique({
@@ -53,46 +30,24 @@ export const routes = {
 
 			const songs = await req.db.playlistPosition.findMany({
 				where: { playlistId: id },
-				select: { songId: true, position: true },
-				orderBy: sort === "timeAdded" ? { position: "asc" } : undefined,
+				select: { songId: true, position: true, dateAdded: true },
 			});
 
-			const limit = Number.parseInt(req.query?.limit) || 50;
-			if (limit > 100) {
-				res.code(400).send({ error: "Limit too high" });
-				return;
-			}
-
-			const offset = Number.parseInt(req.query.offset) || 0;
 			const songIds = songs
 				.sort((a, b) => a.position - b.position)
-				.slice(offset, offset + limit);
 
-			// biome-ignore lint:
-			let orderBy: Record<string, any> = {
-				[sort]: sortDirection,
-			};
-			if (sort === "albumTitle") {
-				orderBy = {
-					album: {
-						title: sortDirection,
-					},
-				};
-			}
-			if (sort === "timeAdded") orderBy = undefined;
-
+			// TODO: optimize this to not be O(n^2)
 			const songsData = await req.db.song.findMany({
 				where: {
 					id: {
 						in: songIds.map((e) => e.songId),
 					},
 				},
-				orderBy,
 			});
 			res.send(
-				await Promise.all(
+				(await Promise.all(
 					songsData.map((e) => req.transformers.transformSong(e, false)),
-				),
+				)).map(e => ({ ...e, position: songs.find(s => s.songId === e.id)?.position, timeAdded: songs.find(s => s.songId === e.id) })),
 			);
 		},
 	},
@@ -141,6 +96,18 @@ export const routes = {
 				res.code(400).send({ error: "Invalid songIds" });
 				return;
 			}
+			const lastPosition = await req.db.playlistPosition.findFirst({
+				where: { playlistId: id },
+				orderBy: { position: "desc" },
+			});
+			await req.db.playlistPosition.createMany({
+				data: req.body.songIds.map((songId, index) => ({
+					playlistId: id,
+					songId,
+					position: index + (lastPosition.position || 1),
+				}))
+			});
+
 		},
 	},
 	delete: {

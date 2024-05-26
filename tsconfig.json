@@ -16,6 +16,10 @@
       "noUnusedLocals": true,
       "noUnusedParameters": true,
       "noFallthroughCasesInSwitch": true,
-      "noImplicitAny": false
+      "noImplicitAny": false,
+      "paths": {
+        "@types": ["packages/types"],
+        "@types/*": ["../../packages/types/src/*"],
+      }
   },
 }

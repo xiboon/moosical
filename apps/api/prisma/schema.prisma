@@ -69,7 +69,7 @@ model Playlist {
 model PlaylistPosition {
     playlistId Int
     songId     Int
-    position   Int      @default(autoincrement())
+    position   Int
     dateAdded  DateTime @default(now())
     Song       Song     @relation(fields: [songId], references: [id])
     Playlist   Playlist @relation(fields: [playlistId], references: [id])

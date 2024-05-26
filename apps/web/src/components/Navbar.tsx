@@ -3,8 +3,8 @@ import { FaHome, FaStar } from "react-icons/fa";
 import { FaGear, FaPlus, FaRegCircleUser } from "react-icons/fa6";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import useSWR from "swr";
+import type { Playlist } from "../../../../packages/types/src/Playlist";
 import Style from "../styles/Navbar.module.scss";
-import type { Playlist } from "../types/Playlist";
 import { useUser } from "../utils/useUser";
 
 export const Navbar: React.FC = () => {

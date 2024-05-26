@@ -14,6 +14,40 @@
     background-color: var(--color-background-secondary);
 }
 
+.quality-button {
+    background-color: rgba(88, 242, 135, 20%);
+    height: 3vh;
+    font-family: 'Be Vietnam Pro';
+    margin-right: 16px;
+    width: 5vw;
+    border: 0;
+    color: var(--color-primary);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.quality-select {
+    background-color: var(--color-background-tertiary);
+    z-index: 100;
+    text-align: left;
+    padding: 8px;
+
+    div {
+        display: flex;
+        flex-direction: row;
+
+        .text {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        p {
+            margin: 0;
+        }
+    }
+}
+
 .song-info {
     width: 30vw;
     height: 95%;
@@ -98,9 +132,8 @@
     }
 }
 
-.progressBar {
+.progress-bar {
     width: 40vw !important;
-
 }
 
 .controls {
@@ -114,7 +147,7 @@
         height: 20px;
         width: 20px;
         margin-right: 10px;
-        padding: 8px;
+        padding: 4px;
         border-radius: 5px;
         transition: 200ms linear;
 

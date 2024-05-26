@@ -84,7 +84,11 @@ export const Player: React.FC = () => {
 				/>
 				<div>
 					<h3>{song?.title}</h3>
-					<p className={Style.artist}> {song?.artist?.name}</p>
+					<p className={Style.artist}>
+						{song?.artist?.name}
+						{song?.featuredArtists?.length !== 0 ? "," : ""}{" "}
+						{song?.featuredArtists?.map((e) => e.name).join(", ")}
+					</p>
 					<p className={Style.playingFrom}>
 						{/* hi fix me */}
 						Playing from: {playingFrom}
@@ -133,6 +137,7 @@ export const Player: React.FC = () => {
 					<p>{convertDuration(song?.duration || 100)}</p>
 				</div>
 			</div>
+
 			<div className={Style.controls}>
 				{/* <Slider
 					range

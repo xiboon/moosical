@@ -6,6 +6,7 @@
     --color-secondary: #45ddc0;
     --color-background: #0f0f0f;
     --color-background-secondary: #18191a;
+    --color-background-tertiary: #1f2021;
     --color-error: #d14e4e;
     --color-warning: #e2bd27;
 }
@@ -46,10 +47,8 @@ body {
     position: absolute;
     border-radius: 10px;
     left: calc(max(200px, 15vw) + 2px);
-    // padding-top: 8px;
     background-color: var(--color-background-secondary);
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden auto;
     top: 8px;
     width: calc(100vw - 8px - max(200px, 16vw) + 1vw);
     height: max(80.8vh, calc(90vh - 36px));
@@ -89,5 +88,4 @@ body {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #44bd68;
-    // overlay: brightness(1.2);
 }

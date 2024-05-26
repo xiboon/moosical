@@ -24,8 +24,6 @@ export const App: React.FC = () => {
 					error.status = data.status;
 					throw error;
 				},
-				refreshInterval: 60000,
-				provider: () => new Map(),
 			}}
 		>
 			<BrowserRouter>

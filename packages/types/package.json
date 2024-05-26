@@ -1,0 +1,16 @@
+{
+  "name": "@moosical/types",
+  "version": "1.0.0",
+  "description": "Shared types for the moosical backend and frontend",
+  "private": true,
+  "exports": {
+    "types": "./src/index.d.ts",
+    "import": null
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "author": "xiboon",
+  "license": "MIT"
+}

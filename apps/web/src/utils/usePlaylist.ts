@@ -1,5 +1,5 @@
+import type { Playlist } from "@moosical/types";
 import useSWR from "swr";
-import type { Playlist } from "../types/Playlist";
 
 export function usePlaylist(id: number) {
 	const { data, error, isLoading } = useSWR(`/playlists/${id}`);
