@@ -1,9 +1,9 @@
+import type { Playlist } from "@moosical/types";
 import { useState } from "react";
 import { FaHome, FaStar } from "react-icons/fa";
 import { FaGear, FaPlus, FaRegCircleUser } from "react-icons/fa6";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import useSWR from "swr";
-import type { Playlist } from "../../../../packages/types/src/Playlist";
 import Style from "../styles/Navbar.module.scss";
 import { useUser } from "../utils/useUser";
 

@@ -1,14 +1,14 @@
+import type { Album, Artist, Song } from "@moosical/types"
 import type {
-	Album,
-	Artist,
+	Album as DBAlbum,
+	Artist as DBArtist,
+	Song as DBSong,
 	Playlist,
 	PrismaClient,
-	Song,
 } from "@prisma/client";
-
 export class Transformers {
 	constructor(private db: PrismaClient) { }
-	async transformSong(song: Song, includeAlbum = true): Promise<Song> {
+	async transformSong(song: DBSong, includeAlbum = true): Promise<Song> {
 		const artist = await this.db.artist.findUnique({
 			where: { id: song.artistId },
 		});
@@ -34,9 +34,10 @@ export class Transformers {
 			featuredArtists,
 			album: album ? await this.transformAlbum(album, false) : null,
 			duration: song.duration,
+			positionOnAlbum: song.position
 		};
 	}
-	async transformAlbum(album: Album, includeSongs = true) {
+	async transformAlbum(album: DBAlbum, includeSongs = true): Promise<Album> {
 		const artist = await this.db.artist.findUnique({
 			where: { id: album.artistId },
 		});
@@ -57,10 +58,10 @@ export class Transformers {
 		};
 	}
 	async transformArtist(
-		artist: Artist,
+		artist: DBArtist,
 		includeAlbums = true,
 		includeSongs = true,
-	) {
+	): Promise<Artist> {
 		const albums = includeAlbums
 			? await Promise.all(
 				(

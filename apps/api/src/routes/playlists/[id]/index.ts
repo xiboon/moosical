@@ -2,7 +2,12 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 export const routes = {
 	get: {
 		handler: async (
-			req: FastifyRequest<{ Params: { id: string } }>,
+			req: FastifyRequest<{
+				Params: { id: string },
+				Querystring: {
+					includeSongs: string;
+				}
+			}>,
 			res: FastifyReply,
 		) => {
 			const id = Number.parseInt(req.params.id);
@@ -15,7 +20,7 @@ export const routes = {
 				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
-			res.send(await req.transformers.transformPlaylist(playlist, false));
+			res.send(await req.transformers.transformPlaylist(playlist, req.query.includeSongs === "true"));
 		},
 	},
 

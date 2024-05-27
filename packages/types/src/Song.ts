@@ -8,9 +8,9 @@ export interface Song {
 	featuredArtists: Artist[];
 	album?: Album;
 	duration: number;
-	format: string;
+	positionOnAlbum: number;
 }
 export interface PlaylistSong extends Song {
 	timeAdded: string;
-
+	position: number;
 }

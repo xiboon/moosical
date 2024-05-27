@@ -7,6 +7,9 @@
     "types": "./src/index.d.ts",
     "import": null
   },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w"

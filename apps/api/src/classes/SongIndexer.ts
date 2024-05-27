@@ -7,7 +7,7 @@ import mime from "mime";
 import { parseBuffer, parseFile } from "music-metadata";
 import sharp from "sharp";
 import { env } from "../util/env.js";
-import type { SongManager } from "./SongManager";
+import type { SongManager } from "./SongManager.js";
 
 export class SongIndexer {
 	finishedAlbums: string[] = [];
