@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { writeFile } from "node:fs/promises";
 import { DiscogsClient } from "@lionralfs/discogs-client";
 import type { PrismaClient } from "@prisma/client";
-import { env } from "../util/env";
+import { env } from "../util/env.js";
 export interface SongData {
 	title: string;
 	artist: string;
@@ -17,7 +17,7 @@ export class SongManager {
 	discogs = new DiscogsClient({
 		auth: { userToken: env.DISCOGS_TOKEN },
 	}).database();
-	constructor(private db: PrismaClient) {}
+	constructor(private db: PrismaClient) { }
 
 	async addArtist(name: string, cover?: Buffer): Promise<number> {
 		const artist = await this.db.artist.findMany({

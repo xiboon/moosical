@@ -37,8 +37,67 @@ export class Transformers {
 			positionOnAlbum: song.position
 		};
 	}
-	async transformAlbum(album: DBAlbum, includeSongs = true): Promise<Album> {
-		const artist = await this.db.artist.findUnique({
+
+
+	async transformSongs(songs: DBSong[], includeAlbum = true): Promise<Song[]> {
+		const allArtists = songs.reduce((acc, e) => {
+			acc.add(e.artistId);
+			e.featuredArtistsIds.forEach((id) => acc.add(id));
+			return acc;
+		}, new Set<number>());
+
+		const allAlbums = songs.reduce((acc, e) => {
+			acc.add(e.albumId);
+			return acc;
+		}, new Set<number>());
+
+		const artists = (await this.db.artist.findMany({
+			where: { id: { in: Array.from(allArtists) } },
+			select: {
+				id: true,
+				name: true,
+				cover: true,
+				createdAt: true,
+				updatedAt: true,
+			}
+		})).reduce((acc, e) => {
+			acc[e.id] = e;
+			return acc;
+		}, {});
+
+		const albums = (await this.db.album.findMany({
+			where: { id: { in: Array.from(allAlbums) } },
+		})).reduce((acc, e) => {
+			acc[e.id] = e;
+			return acc;
+		}, {});
+
+		return await Promise.all(
+			songs.map(async (e) => {
+				const artist = artists[e.artistId];
+				const featuredArtists = e.featuredArtistsIds.map(e => artists[e]);
+				const album = includeAlbum ? albums[e.albumId] : null;
+				return {
+					id: e.id,
+					title: e.title,
+					artist,
+					featuredArtists,
+					album: album ? await this.transformAlbum(album, false, artist) : null,
+					duration: e.duration,
+					positionOnAlbum: e.position
+				};
+			}),
+		);
+	}
+
+	async transformAlbum(album: DBAlbum, includeSongs = true, albumArtist?: {
+		id: number;
+		name: string;
+		cover: string;
+		createdAt: Date;
+		updatedAt: Date;
+	}): Promise<Album> {
+		const artist = albumArtist ?? await this.db.artist.findUnique({
 			where: { id: album.artistId },
 		});
 		const songs = includeSongs
@@ -87,7 +146,7 @@ export class Transformers {
 			songs,
 		};
 	}
-	async transformPlaylist(playlist: Playlist, includeSongs = true) {
+	async transformPlaylist(playlist: Playlist, includeSongs = true, after?: number, before?: number) {
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		let songs: Record<string, any>[] = [];
 		if (includeSongs) {
@@ -95,14 +154,27 @@ export class Transformers {
 				where: {
 					playlistId: playlist.id,
 				},
+				orderBy: { position: "asc" },
+				take: before,
+				skip: after
 			});
-			songs = await Promise.all(
-				(
-					await this.db.song.findMany({
-						where: { id: { in: songIds.map((e) => e.songId) } },
-					})
-				).map((e) => this.transformSong(e, false)),
-			);
+			const songIdsMap = songIds.reduce((acc, e) => {
+				acc[e.songId] = e;
+				return acc;
+			}, {
+			});
+
+
+			songs = (await this.transformSongs(await this.db.song.findMany({
+				where: { id: { in: songIds.map((e) => e.songId) } },
+			}))).map(e => ({ ...e, position: songIdsMap[e.id].position, timeAdded: songIdsMap[e.id].dateAdded }));
+			// songs = await Promise.all(
+			// (
+			// await this.db.song.findMany({
+			// where: { id: { in: songIds.map((e) => e.songId) } },
+			// })
+			// ).map(async (e) => ({ ...(await this.transformSong(e, true)), position: songIdsMap[e.id].position, timeAdded: songIdsMap[e.id].dateAdded })),
+			// );
 		}
 		const author = await this.db.user.findUnique({
 			where: { id: playlist.userId },

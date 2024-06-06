@@ -46,11 +46,6 @@ export const Auth: React.FC = () => {
 				.filter((v, i, a) => a.indexOf(v) === i)
 				.slice(0, 32),
 		);
-		// setImages((v) => [...v, ...v].sort(Math.random));
-		// setImages([
-		// 	145, 148, 133, 131, 132, 94, 67, 193, 219, 244, 281, 293, 304, 399, 458,
-		// 	305, 145, 148,
-		// ]);
 	}, [data]);
 	if (isLoading) return null;
 	if (error) {

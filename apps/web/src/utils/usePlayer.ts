@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
 
 export const audioElement = new Audio();
-
+// biome-ignore lint: no other way 
+export const PlayerContext = createContext<ReturnType<typeof usePlayer>>({} as any);
 export function usePlayer() {
 	const [duration, setDuration] = useState(audioElement.duration);
 	const [position, setPositionState] = useState(audioElement.currentTime);
-	const [queue, setQueue] = useState<number[]>([]);
+	const [queue, setQueueState] = useState<number[]>([]);
 	const [queueType, setQueueType] = useState<"playlist" | "song" | "album">(
-		"song",
+		"playlist",
 	);
+	const [preShuffle, setPreShuffle] = useState<number[]>([]);
 	const [previousSongs, setPreviousSongs] = useState<number[]>([]);
-	const [shuffle, setShuffle] = useState(false);
+	const [shuffle, setShuffleState] = useState(false);
 	const [repeat, setRepeat] = useState(false);
 	const [songId, setSongIdState] = useState(0);
 	const [volume, setVolumeState] = useState(audioElement.volume);
@@ -20,13 +22,30 @@ export function usePlayer() {
 	const [muted, setMuted] = useState(audioElement.muted);
 	const [queueId, setQueueIdState] = useState(0);
 
-	const [sortBy, setSortBy] = useState<
-		"artistName" | "title" | "albumTitle" | "timeAdded" | "duration"
-	>("timeAdded");
-	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+	function setQueue(queue: number[]) {
+		if (shuffle) {
+			for (let i = queue.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[queue[i], queue[j]] = [queue[j], queue[i]];
+			}
+		}
+		setQueueState(queue);
+	}
+	function setShuffle(shuffle: boolean) {
+		setShuffleState(shuffle);
+		if (shuffle) {
+			setPreShuffle(queue);
+			const arr = queue;
+			for (let i = arr.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[arr[i], arr[j]] = [arr[j], arr[i]];
+			}
+			setQueue(arr);
+		} else {
+			setQueue(preShuffle);
+		}
+	}
 
-	let queueOffset = 0;
-	
 	function back() {
 		setQueue([songId, ...queue]);
 		if (position > 5) return setPosition(0);
@@ -46,9 +65,8 @@ export function usePlayer() {
 	function setSongId(id: number) {
 		setSongIdState(id);
 		console.log(quality, Number.isNaN(quality));
-		audioElement.src = `${
-			import.meta.env.VITE_API_URL
-		}/songs/${id}/data?format=${format}${quality === undefined ? "" : `&quality=${quality}`}`;
+		audioElement.src = `${import.meta.env.VITE_API_URL
+			}/songs/${id}/data?format=${format}${quality === undefined ? "" : `&quality=${quality}`}`;
 	}
 
 	function play() {
@@ -80,9 +98,6 @@ export function usePlayer() {
 		setQueue(ownQueue);
 	}
 
-	function setQueueOffset(offset: number) {
-		queueOffset = offset;
-	}
 
 	function setVolume(volume: number) {
 		audioElement.volume = volume;
@@ -97,13 +112,10 @@ export function usePlayer() {
 	function setQueueId(
 		id: number,
 		type: "playlist" | "song" | "album",
-		shuffle = false,
-		repeat = false,
 		fetch = true,
 	) {
+		console.log({ id, type, fetch })
 		setQueueIdState(id);
-		setShuffle(shuffle);
-		setRepeat(repeat);
 		setQueueType(type);
 		return fetch ? fetchQueue(id, false) : null;
 	}
@@ -122,39 +134,11 @@ export function usePlayer() {
 	};
 	audioElement.ontimeupdate = () => {
 		setPositionState(audioElement.currentTime);
-	
+
 	}
 	function fetchQueue(id?: number, append = false) {
-		if (!queueId) setQueueId(id || songId, "song", false, false, false);
+		if (!queueId) setQueueId(id || songId, "song", false);
 		if (queue.length === 0) {
-			if (queueType === "playlist") {
-				let url = `${import.meta.env.VITE_API_URL}/playlists/${
-					id || queueId
-				}/songs`;
-
-				if (sortBy) {
-					url += `?sort=${sortBy}`;
-				}
-
-				if (sortDirection) {
-					url += `&sortDirection=${sortDirection}`;
-				}
-
-				if (shuffle) {
-					url += "&shuffle=true";
-				}
-
-				if (queueOffset) {
-					url += `&startFrom=${queueOffset}`;
-				}
-				return fetch(url, { credentials: "include" })
-					.then((res) => res.json())
-					.then((data) => {
-						if (append) setQueue([...queue, ...data]);
-						else setQueue(data);
-						if (!songId) setSongId(data[0]);
-					});
-			}
 			if (queueType === "song") {
 				if (queueId === 0) return;
 				const url = `${import.meta.env.VITE_API_URL}/songs/${queueId}/queue`;
@@ -189,9 +173,6 @@ export function usePlayer() {
 		setQuality,
 		quality,
 		shuffle,
-		setQueueOffset,
-		setSortBy,
-		setSortDirection,
 		setQueueId,
 		setQueue,
 		muted,

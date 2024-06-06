@@ -6,6 +6,10 @@ export const routes = {
 		handler: async (
 			req: FastifyRequest<{
 				Params: { id: string };
+				Querystring: {
+					before: string;
+					after: string;
+				};
 			}>,
 			res: FastifyReply,
 		) => {
@@ -16,6 +20,7 @@ export const routes = {
 				select: {
 					public: true,
 					userId: true,
+					id: true,
 				},
 			});
 
@@ -27,28 +32,34 @@ export const routes = {
 				res.code(403).send({ error: "Forbidden" });
 				return;
 			}
+			if (req.query.before && Number.isNaN(Number.parseInt(req.query.before))) {
+				return res.code(400).send({ error: "Invalid querystring" });
+			}
 
-			const songs = await req.db.playlistPosition.findMany({
-				where: { playlistId: id },
-				select: { songId: true, position: true, dateAdded: true },
-			});
+			if (req.query.after && Number.isNaN(Number.parseInt(req.query.after))) {
+				return res.code(400).send({ error: "Invalid querystring" });
+			}
 
-			const songIds = songs
-				.sort((a, b) => a.position - b.position)
-
-			// TODO: optimize this to not be O(n^2)
-			const songsData = await req.db.song.findMany({
+			const songIds = await req.db.playlistPosition.findMany({
 				where: {
-					id: {
-						in: songIds.map((e) => e.songId),
-					},
+					playlistId: playlist.id,
 				},
+				orderBy: { position: "asc" },
+				take: req.query.before ? Number.parseInt(req.query.before) : undefined,
+				skip: req.query.after ? Number.parseInt(req.query.after) : undefined
 			});
-			res.send(
-				(await Promise.all(
-					songsData.map((e) => req.transformers.transformSong(e, false)),
-				)).map(e => ({ ...e, position: songs.find(s => s.songId === e.id)?.position, timeAdded: songs.find(s => s.songId === e.id) })),
-			);
+			const songIdsMap = songIds.reduce((acc, e) => {
+				acc[e.songId] = e;
+				return acc;
+			}, {
+			});
+
+
+			const songs = (await req.transformers.transformSongs(await req.db.song.findMany({
+				where: { id: { in: songIds.map((e) => e.songId) } },
+			}))).map(e => ({ ...e, position: songIdsMap[e.id].position, timeAdded: songIdsMap[e.id].dateAdded }));
+
+			res.send(songs);
 		},
 	},
 	put: {

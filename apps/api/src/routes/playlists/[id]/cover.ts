@@ -75,4 +75,36 @@ export const routes = {
 			return res.send(file);
 		},
 	},
+	post: {
+		handler: async (
+			req: FastifyRequest<{ Params: { id: string } }>,
+			res: FastifyReply,
+		) => {
+			const playlist = await req.db.playlist.findUnique({
+				where: { id: Number.parseInt(req.params.id) },
+			});
+			if (!playlist) return res.code(404).send({ error: "Playlist not found" });
+			const user = await req.db.user.findUnique({
+				where: { id: playlist.userId },
+			});
+			const hash = crypto
+				.createHash("sha1")
+				.update(user.name + playlist.title)
+				.digest("hex");
+
+			const coverPath = `${env.IMAGE_PATH}/playlist_${hash}.webp`;
+			const image = await req.file();
+			if (image?.type !== "file")
+				return res.code(400).send({ error: "No file provided" });
+			if (
+				!image.mimetype.startsWith("image/") ||
+				image.mimetype === "image/svg+xml"
+			)
+				return res.code(400).send({ error: "Invalid file" });
+			await writeFile(
+				coverPath,
+				await image.toBuffer(),
+			);
+		},
+	},
 };

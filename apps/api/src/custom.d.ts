@@ -2,7 +2,7 @@ import type { PrismaClient } from "@prisma/client";
 import type { LyricsProvider } from "./classes/LyricsProvider";
 import type { SongIndexer } from "./classes/SongIndexer";
 import type { SongManager } from "./classes/SongManager";
-import type { Transformers } from "./classes/Transformers";
+import type { Transformers } from "./classes/Transformers.js";
 declare module "fastify" {
 	interface FastifyRequest extends FastifyRequest {
 		db: PrismaClient;

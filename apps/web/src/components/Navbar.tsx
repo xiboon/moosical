@@ -23,10 +23,9 @@ export const Navbar: React.FC = () => {
 		return <Navigate to="/auth" />;
 	}
 
-	console.log(playlists);
 	return (
 		<div>
-			<div className={Style.nav}>
+			<div className={`${Style.nav} nav`}>
 				<div className={Style.user}>
 					<div>
 						{errorLoading ? (

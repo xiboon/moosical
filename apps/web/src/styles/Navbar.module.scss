@@ -1,3 +1,5 @@
+
+
 .nav {
     display: flex;
     flex-direction: column;
@@ -121,6 +123,7 @@
         }
 
         p {
+            font-weight: 300 !important;
             color: inherit;
             background-color: rgba(0, 0, 0, 0%);
         }
@@ -181,7 +184,6 @@
 .settings-link {
     text-decoration: none;
     color: inherit;
-    margin-right: 5px;
     border-radius: 10px;
     height: 2vh;
     width: 2vh;

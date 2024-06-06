@@ -9,11 +9,22 @@
     --color-background-tertiary: #1f2021;
     --color-error: #d14e4e;
     --color-warning: #e2bd27;
+
+    &:not(:has(.player)) {
+        .main-content {
+            height: max(97.8vh, calc(97vh - 36px));
+
+        }
+
+        .nav {
+            height: calc(100vh - 16px);
+        }
+    }
 }
 
 h1 {
     font-family: Kanit;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--color-primary);
 }
 
@@ -25,7 +36,7 @@ h5,
 h6,
 p {
     font-family: 'Be Vietnam Pro';
-    font-weight: 600;
+    font-weight: 400;
     text-decoration: none;
     color: white;
 }

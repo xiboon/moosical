@@ -22,3 +22,4 @@ a work in progress self-hosted music streaming service
 - [ ] improve types in both the frontend and backend
 - [ ] volume normalization
 - [ ] improve validation in the backend using [zod](https://npmjs.com/package/zod)
+- [ ] genius annotations

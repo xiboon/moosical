@@ -13,7 +13,6 @@ input[type="password"] {
 
 
 .select-container {
-    // height: 5vh;
     width: 8vw;
     display: block !important;
 
@@ -25,8 +24,6 @@ input[type="password"] {
     .select__value-container {
         display: flex;
         align-items: center;
-
-        // justify-content: center;
     }
 
     .select__single-value {
